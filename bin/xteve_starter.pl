@@ -10,5 +10,6 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
 }
 print "Executing: Starting xTeVe and crond services...\n";
-system ("/usr/sbin/crond -l 2 -f -L /var/log/cron.log &");
+print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/eWYquha\n";
+system("/usr/sbin/crond -l 2 -f -L /var/log/cron.log &");
 system("$XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT");
