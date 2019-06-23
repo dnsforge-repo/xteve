@@ -1,8 +1,11 @@
 #!/usr/bin/perl
+
 $XTEVE_HOME = $ENV{'XTEVE_HOME'};
 $XTEVE_BIN  = $ENV{'XTEVE_BIN'};
 $XTEVE_CONF = $ENV{'XTEVE_CONF'};
 $XTEVE_PORT = $ENV{'XTEVE_PORT'};
+$GUIDE2GO_HOME = $ENV{'GUIDE2GO_HOME'};
+$GUIDE2GO_CONF = $ENV{'GUIDE2GO_CONF'};
 
 if ( !-e "$XTEVE_HOME/.xteve.run") {
 	print "Executing: Installation of Perl Modules...\n";
