@@ -36,7 +36,7 @@ perl-lwp-useragent-determined
 
 # Pull the required binaries for XTeve, Guide2go and Zap2xml from the repos.
 ADD /bin/xteve_starter.pl /home/xteve/bin/xteve_starter.pl
-#ADD https://xteve.de:9443/download/?os=linux&arch=amd64&name=xteve&beta=false /xteve/xteve
+#ADD https://xteve.de:9443/download/?os=linux&arch=amd64&name=xteve&beta=false /home/xteve/bin/xteve
 ADD /bin/xteve /home/xteve/bin/xteve
 ADD /bin/guide2go /home/xteve/bin/guide2go
 ADD /bin/guide2go.json /home/xteve/guide2go/conf/guide2go.json
