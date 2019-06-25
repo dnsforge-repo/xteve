@@ -57,6 +57,14 @@ This container is configured with the following default environmental variables,
 <td>/home/xteve/conf</td>
 </tr>
 <tr>
+<td>$XTEVE_CONF/data</td>
+<td>/home/xteve/conf/data</td>
+</tr>
+<tr>
+<td>$XTEVE_CONF/backup</td>
+<td>/home/xteve/conf/backup</td>
+</tr>
+<tr>
 <td>$GUIDE2GO_HOME</td>
 <td>/home/xteve/guide2go</td>
 </tr>
@@ -166,4 +174,3 @@ inside the container. You will need to add the zap2XML XML file in <b>XMLTV->Add
 
 
 Enjoy!
-
