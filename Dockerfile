@@ -25,20 +25,18 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache tzdata
 
 # Install Perl for Zap2it support
-RUN apk add --no-cache perl-dev build-base
-
-# Setup repos and deps & install Perl modules
-RUN echo "@edge http://nl.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
-RUN echo "@edgetesting http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 RUN apk add --no-cache \
-perl-html-parser@edge \
-perl-http-cookies@edge \
-perl-json@edge \
-perl-lwp-protocol-https@edge \
-perl-lwp-useragent-determined@edge
+perl-dev \
+build-base \
+perl-html-parser \
+perl-http-cookies \
+perl-json \
+perl-lwp-protocol-https \
+perl-lwp-useragent-determined
 
 # Pull the required binaries for XTeve, Guide2go and Zap2xml from the repos.
 ADD /bin/xteve_starter.pl /home/xteve/bin/xteve_starter.pl
+#ADD https://xteve.de:9443/download/?os=linux&arch=amd64&name=xteve&beta=false /xteve/xteve
 ADD /bin/xteve /home/xteve/bin/xteve
 ADD /bin/guide2go /home/xteve/bin/guide2go
 ADD /bin/guide2go.json /home/xteve/guide2go/conf/guide2go.json
