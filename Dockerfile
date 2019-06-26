@@ -22,7 +22,7 @@ ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 RUN apk add ca-certificates
 
 # Add Bash shell
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash busybox-suid
 
 # Timezone (TZ):  Add the tzdata package and configure for EST timezone.
 # This will override the default container time in UTC.
