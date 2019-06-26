@@ -25,6 +25,8 @@ $XTEVE_PORT = $ENV{'XTEVE_PORT'};
 $GUIDE2GO_HOME = $ENV{'GUIDE2GO_HOME'};
 $GUIDE2GO_CONF = $ENV{'GUIDE2GO_CONF'};
 
+$PROFILE = "/etc/profile";
+
 if ( !-e "$XTEVE_HOME/.xteve.run") {
 	print "Executing: Installation of Perl Modules...\n";
 	system("/usr/bin/perl -MCPAN -e \"install JSON::XS\" >/var/log/xteve_start.log 2>&1");
@@ -35,6 +37,15 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_HOME");
 	system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_TEMP");
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
+
+open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
+	print PROFILE "\n# Set custom \$USER Environment\n";
+	print PROFILE "export XTEVE_BIN=/home/xteve/bin\n";
+	print PROFILE "export XTEVE_CONF=/home/xteve/conf\n";
+	print PROFILE "export XTEVE_HOME=/home/xteve\n";
+	print PROFILE "export GUIDE2GO_HOME=/home/xteve/guide2go\n";
+	print PROFILE "export GUIDE2GO_CONF=/home/xteve/guide2go/conf\n";
+close PROFILE;
 }
 print "Executing: Starting xTeVe and crond services...\n";
 print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/eWYquha\n";
