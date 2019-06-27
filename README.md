@@ -7,6 +7,8 @@ Image Maintainer:  <b>LeeD </b>\<hostmaster@dnsforge.com\></a>
 For support come visit us at our xTeVe Discord channel:
 https://discord.gg/eWYquha
 
+<br>
+
 <h2 id="description">Description</h2>
 
 xTeVe is a M3U proxy server for Plex, Emby and any client and provider which supports the .TS and .M3U8 (HLS) streaming formats.
@@ -23,7 +25,8 @@ The recommended container settings are listed in the docker run command listed b
 
 <p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=America/New_York  -p 127.0.0.1:34400:34400 -v ~xteve:/home/xteve/conf -v ~xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
 
-
+<br>
+<br>
 
 <h2 id="container paths">Default container paths</h2>
 
@@ -76,6 +79,7 @@ This container is configured with the following default environmental variables,
 </tbody>
 </table>
 
+<br>
 
 <h2 id="parameters">Parameters</h2>
 
@@ -131,7 +135,16 @@ This container is configured with the following default environmental variables,
 </tbody>
 </table>
 
+<br>
+<br>
+<p><b>Linux Shell (Bash)</b></p>
+To connect to the xTeVe container to run local commands, use the following docker command to start a bash shell:
+<p><b>docker exec -it dnsforge/xteve:latest /bin/bash</b></p>
+<br>
+<br>
+
 <p><b>Linux:</b></p>
+Run the container with the 'docker run' command with any desired parameters from the table above.
 
 mkdir -p ~/xteve
 
@@ -139,15 +152,19 @@ mkdir -p ~/xteve_tmp
 
 docker run -it -d --name=xteve --network=host --restart=always -e TZ=America/New_York -p 127.0.0.1:34400:34400 -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
 
+<br>
+<br>
 
 <p><b>Synology:</b></p>
-
+Run the container with the 'docker run' command with any desired parameters from the table above.
 
 mkdir /volume1/docker/xteve
 
 mkdir /volume1/docker/xteve_tmp
 
 docker run -it -d --name=xteve --network=host --restart=always -e TZ=America/New_York -p 127.0.0.1:34400:34400 -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
+
+<br>
 
 <h2 id="Guide2go Configuration">Guide2go Configuration</h2>
 
@@ -157,17 +174,20 @@ To use this feature you will need to purchase a <a href="http://www.schedulesdir
 
 You will need to enter your Schedules Direct username and password then select "2. Add lineup"  and follow the prompts.  Finally you will want to select the channels for your lineup using option "4. Manage channels".
 
+<br>
+
 <h2 id="Guide2go Crontab">Guide2go Crontab</h2>
 
-Additionally a sample crontab has been created to run the guide2go configuration on a weekly basis. To modify the crontab run 'crontab -e'
+Additionally a sample crontab has been created to run the guide2go configuration on a weekly basis. To modify the crontab run <b>'crontab -e -u xteve'</b>
 from a command prompt terminal inside the container.  You will need to add the guide2go XML file in <b>XMLTV->Add</b> in xTeVe. The sample crontab runs at 1:15 AM on sundays.
 
 <p><b>guide2go -config $GUIDE2GO_CONF/guide2go.json</p\b></p>
 
+<br>
 
 <h2 id="zap2XML Crontab">zap2XML Crontab</h2>
 
-Also a sample crontab has been created to run the zap2XML configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run 'crontab -e' from a command prompt terminal 
+Also a sample crontab has been created to run the zap2XML configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run  <b>'crontab -e -u xteve'</b> from a command prompt terminal 
 inside the container. You will need to add the zap2XML XML file in <b>XMLTV->Add</b> in xTeVe. The sample crontab runs at 1:15 AM on sundays.
 
 <p><b>/usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username -p password -o $XTEVE_CONF/data/zap2xml.xml</p\b></p>
