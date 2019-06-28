@@ -139,7 +139,9 @@ This container is configured with the following default environmental variables,
 <br>
 <p><b>Linux Shell (Bash)</b></p>
 To connect to the xTeVe container to run local commands, use the following docker command to start a bash shell:
-<p><b>docker exec -it dnsforge/xteve:latest /bin/bash</b></p>
+<p><b>docker exec -it dnsforge/xteve /bin/bash</b></p>
+
+You will automatically be logged in as the root user.  Type <b>"su - xteve"</b> to change to the xTeve user.
 <br>
 <br>
 
