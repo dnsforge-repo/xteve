@@ -18,6 +18,9 @@ ENV XTEVE_PORT=34400
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 
+# Set working directory
+WORKDIR /home/xteve
+
 # Dependencies
 RUN apk add ca-certificates
 
@@ -63,5 +66,5 @@ VOLUME /tmp/xteve
 # Expose Ports for Access
 EXPOSE 34400
 
-# Run the XteVe startup script
+# Run the xTeVe init script
 ENTRYPOINT ["/home/xteve/bin/xteve_starter.pl"]
