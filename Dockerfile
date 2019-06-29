@@ -57,7 +57,7 @@ RUN chmod +rx /home/xteve/bin/zap2xml.pl
 
 # Guide2go: Configure the guide2go crontab to grab EPG data for (7) days at 01:15 AM Sundays. 
 RUN printf '# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n' > /etc/crontabs/xteve
-RUN printf '# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username@domain.com -p ************ -o $XTEVE_CONF/data/zap2xml.xml\n' >> /etc/crontabs/xteve
+RUN printf '# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username@domain.com -p ******** -U -o $XTEVE_CONF/data/zap2xml.xml\n' >> /etc/crontabs/xteve
 
 # Configure container mappings
 VOLUME /home/xteve/conf

@@ -123,7 +123,7 @@ This container is configured with the following default environmental variables,
 </tr>
 <tr>
 <td>-v</td>
-<td>Set default container port mapping [ 127.0.0.1:34400:34400 ]</td>
+<td>Set container volume mapping [ -v ~xteve:/home/xteve/conf ]</td>
 </tr>
 <tr>
 <td>dnsforge/xteve:latest</td>
