@@ -6,7 +6,6 @@ MAINTAINER LeeD hostmaster@dnsforge.com
 
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/xteve/bin
 ENV PERL_MM_USE_DEFAULT=1
-ENV TZ America/New_York
 ENV XTEVE_USER=xteve
 ENV XTEVE_UID=31337
 ENV XTEVE_GID=31337
@@ -22,14 +21,16 @@ ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 WORKDIR /home/xteve
 
 # Dependencies
-RUN apk add ca-certificates
+RUN apk add --no-cache ca-certificates
 
 # Add Bash shell
 RUN apk add --no-cache bash busybox-suid
 
-# Timezone (TZ):  Add the tzdata package and configure for EST timezone.
+# Timezone (TZ):  Add the tzdata package and configure for $TZ timezone.
 # This will override the default container time in UTC.
-RUN apk add --no-cache tzdata
+RUN apk update && apk add --no-cache tzdata
+ENV TZ=America/New_York
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install Perl for Zap2it support
 RUN apk add --no-cache \

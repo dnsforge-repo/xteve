@@ -192,7 +192,7 @@ from a command prompt terminal inside the container.  You will need to add the g
 Also a sample crontab has been created to run the zap2XML configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run  <b>'crontab -e -u xteve'</b> from a command prompt terminal 
 inside the container. You will need to add the zap2XML XML file in <b>XMLTV->Add</b> in xTeVe. The sample crontab runs at 1:15 AM on sundays.
 
-<p><b>/usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username -p password -o $XTEVE_CONF/data/zap2xml.xml</p\b></p>
+<p><b>/usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username@domain.com -p password -U -o $XTEVE_CONF/data/zap2xml.xml</p\b></p>
 
 
 Enjoy!
