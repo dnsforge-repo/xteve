@@ -23,7 +23,7 @@ xTeVe emulates an SiliconDust HDHomeRun OTA tuner which allows it to expose IPTV
 
 The recommended container settings are listed in the docker run command listed below:
 
-<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=America/New_York  -p 127.0.0.1:34400:34400 -v ~xteve:/home/xteve/conf -v ~xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -p 127.0.0.1:34400:34400 -v ~xteve:/home/xteve/conf -v ~xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
 
 <br>
 <br>
@@ -152,7 +152,7 @@ mkdir -p ~/xteve
 
 mkdir -p ~/xteve_tmp
 
-docker run -it -d --name=xteve --network=host --restart=always -e TZ=America/New_York -p 127.0.0.1:34400:34400 -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
+docker run -it -d --name=xteve --network=host --restart=always -p 127.0.0.1:34400:34400 -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
 
 <br>
 <br>
@@ -164,7 +164,7 @@ mkdir /volume1/docker/xteve
 
 mkdir /volume1/docker/xteve_tmp
 
-docker run -it -d --name=xteve --network=host --restart=always -e TZ=America/New_York -p 127.0.0.1:34400:34400 -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
+docker run -it -d --name=xteve --network=host --restart=always -p 127.0.0.1:34400:34400 -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
 
 <br>
 
