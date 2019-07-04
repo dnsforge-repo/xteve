@@ -33,12 +33,12 @@ $XTEVE_TEMP = $ENV{'XTEVE_TEMP'};
 $XTEVE_BIN  = $ENV{'XTEVE_BIN'};
 $XTEVE_CONF = $ENV{'XTEVE_CONF'};
 $XTEVE_PORT = $ENV{'XTEVE_PORT'};
+$XTEVE_LOG  = $ENV{'XTEVE_LOG'};
 $GUIDE2GO_HOME = $ENV{'GUIDE2GO_HOME'};
 $GUIDE2GO_CONF = $ENV{'GUIDE2GO_CONF'};
 
 $PATH = $ENV{'PATH'};
 $TZ = $ENV{'TZ'};
-
 
 $PROFILE = "/etc/profile";
 
@@ -76,5 +76,5 @@ print "Executing: Info: For support come see us in our Discord channel: https://
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_HOME");
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_TEMP");
 system("/usr/sbin/crond -l 2 -f -L /var/log/cron.log &");
-system("/bin/su -c \"$XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT\" - $XTEVE_USER");
+exec("/sbin/su-exec xteve $XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT >> $XTEVE_LOG 2>&1");
 

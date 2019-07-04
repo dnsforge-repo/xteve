@@ -111,7 +111,7 @@ This container is configured with the following default environmental variables,
 </tr>
 <tr>
 <td>-p 38400</td>
-<td>Default container port mapping [ie; 127.0.0.1:38400:38400]</td>
+<td>Default container port mapping [ 127.0.0.1:38400:38400 ]</td>
 </tr>
 <tr>
 <td>-e XTEVE_PORT=8080</td>
