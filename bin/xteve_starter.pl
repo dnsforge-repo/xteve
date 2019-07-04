@@ -76,5 +76,5 @@ print "Executing: Info: For support come see us in our Discord channel: https://
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_HOME");
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_TEMP");
 system("/usr/sbin/crond -l 2 -f -L /var/log/cron.log &");
-exec("/sbin/su-exec xteve $XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT >> $XTEVE_LOG 2>&1");
+exec("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT >> $XTEVE_LOG 2>&1");
 
