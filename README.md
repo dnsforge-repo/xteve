@@ -35,11 +35,11 @@ You can customise the container installation by passing options with <b> 'docker
 
 Custom Locale:
 
-<p><b> run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -v $LOCAL_DIR/xteve:/home/xteve/conf -v
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -v $LOCAL_DIR/xteve:/home/xteve/conf -v
 $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
 
 Custom Port and Locale:
-<p><b> run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -e XTEVE_PORT=8080 -v $LOCAL_DIR/xteve:/home/xteve/conf -v
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -e XTEVE_PORT=8080 -v $LOCAL_DIR/xteve:/home/xteve/conf -v
 $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
 
 <br>
