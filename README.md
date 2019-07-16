@@ -19,16 +19,32 @@ xTeVe emulates an SiliconDust HDHomeRun OTA tuner which allows it to expose IPTV
                     *    Guide2go (Linux) x86 64 bit  (Schedules Direct XMLTV grabber)
                     *    Zap2XML (Perl based zap2it XMLTV grabber)
                     *    Crond
-                    *    Perl
+                    *    Bash / Perl
 
-The recommended container settings are listed in the docker run command listed below:
+The recommended <b>default</b> container settings are listed in the docker run command listed below:
 
-<p><b> docker run -it -d --name=xteve --network=host --restart=always -p 127.0.0.1:34400:34400 -v ~xteve:/home/xteve/conf -v ~xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+
+The default Locale is configured as: <b>America/New_York (EST) </b> and the Web UI can be accessed at <b>http://\$HOST_IP:34400/web/ </b>
 
 <br>
+
+<h2 >Custom Configuration</h2>
+
+You can customise the container installation by passing options with <b> 'docker run'</b> or by selecting the "Environment" tab in your docker GUI.  Below are a few examples of customising the container configuration.  Please see the "Parameters" table below for a list of all supported options.
+
+Custom Locale:
+
+<p><b> run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -v $LOCAL_DIR/xteve:/home/xteve/conf -v
+$LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+
+Custom Port and Locale:
+<p><b> run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -e XTEVE_PORT=8080 -v $LOCAL_DIR/xteve:/home/xteve/conf -v
+$LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+
 <br>
 
-<h2 id="container paths">Default container paths</h2>
+<h2>Default container paths</h2>
 
 This container is configured with the following default environmental variables,  For reference here are the path's of the xTeVe installation:
 
@@ -137,35 +153,39 @@ This container is configured with the following default environmental variables,
 
 <br>
 <br>
+
 <p><b>Linux Shell (Bash)</b></p>
 To connect to the xTeVe container to run local commands, use the following docker command to start a bash shell:
 <p><b>docker exec -it xteve /bin/bash</b></p>
 
 You will automatically be logged in as the root user.  Type <b>"su - xteve"</b> to change to the xTeve user.
+
 <br>
 <br>
 
 <p><b>Linux:</b></p>
 Run the container with the 'docker run' command with any desired parameters from the table above.
 
-mkdir -p ~/xteve
+<p><b>mkdir -p ~/xteve</b>
 
-mkdir -p ~/xteve_tmp
+<p><b>mkdir -p ~/xteve_tmp</b>
 
-docker run -it -d --name=xteve --network=host --restart=always -p 127.0.0.1:34400:34400 -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
+<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b>
 
 <br>
 <br>
 
 <p><b>Synology:</b></p>
-Run the container with the 'docker run' command with any desired parameters from the table above.
+Run the container with the 'docker run' command with any desired parameters from the table above.  Alternatively you can launch this image in the
+Synology Docker GUI which is equivalent to 'docker run'.
 
-mkdir /volume1/docker/xteve
+<p><b>mkdir /volume1/docker/xteve</b>
 
-mkdir /volume1/docker/xteve_tmp
+<p><b>mkdir /volume1/docker/xteve_tmp</b>
 
-docker run -it -d --name=xteve --network=host --restart=always -p 127.0.0.1:34400:34400 -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve dnsforge/xteve:latest
+<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b>
 
+<br>
 <br>
 
 <h2 id="Guide2go Configuration">Guide2go Configuration</h2>
@@ -176,6 +196,7 @@ To use this feature you will need to purchase a <a href="http://www.schedulesdir
 
 You will need to enter your Schedules Direct username and password then select "2. Add lineup"  and follow the prompts.  Finally you will want to select the channels for your lineup using option "4. Manage channels".
 
+<br>
 <br>
 
 <h2 id="Guide2go Crontab">Guide2go Crontab</h2>
