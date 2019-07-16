@@ -4,7 +4,7 @@
 # ; Author : LeeD <hostmaster@dnsforge.com>
 # ; Rev    : v1.0.1
 # ; Date   : 6/25/2019
-# ; Last Modification: 6/25/2019
+# ; Last Modification: 7/14/2019
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -41,6 +41,7 @@ $PATH = $ENV{'PATH'};
 $TZ = $ENV{'TZ'};
 
 $PROFILE = "/etc/profile";
+$CRONDIR = "/etc/crontabs";
 
 if ( !-e "$XTEVE_HOME/.xteve.run") {
 	print "Executing: Installation of Perl Modules...\n";
@@ -59,6 +60,11 @@ if ( $TZ !~ /America\/New_York/ ) {
 	unlink("/etc/localtime","/etc/timezone");
 	system("/bin/ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone");
 }
+
+open CRONFILE, ">>$CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: $!";
+	print CRONFILE "# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n";
+	print CRONFILE "# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username\@domain.com -p ******** -U -o $XTEVE_CONF/data/zap2xml.xml\n";
+close PROFILE;
 
 open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
 	print PROFILE "\n# Set custom \$USER Environment\n";

@@ -3,10 +3,11 @@ RUN apk update
 RUN apk upgrade
 RUN apk add --no-cache ca-certificates
 
-MAINTAINER LeeD hostmaster@dnsforge.com
+MAINTAINER LeeD <hostmaster@dnsforge.com>
 
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/xteve/bin
-ENV PERL_MM_USE_DEFAULT=1
+LABEL VERSION=1.0.1
+LABEL SUPPORT_URL=https://discord.gg/eWYquha
+
 ENV XTEVE_USER=xteve
 ENV XTEVE_UID=31337
 ENV XTEVE_GID=31337
@@ -18,6 +19,9 @@ ENV XTEVE_PORT=34400
 ENV XTEVE_LOG=/var/log/xteve.log
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
+
+ENV PERL_MM_USE_DEFAULT=1
+ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$XTEVE_BIN
 
 # Set working directory
 WORKDIR $XTEVE_HOME
@@ -55,11 +59,7 @@ RUN chmod +x $XTEVE_BIN/xteve
 RUN chmod +x $XTEVE_BIN/guide2go
 RUN chmod +rx $XTEVE_BIN/zap2xml.pl
 
-# Guide2go: Configure the guide2go crontab to grab EPG data for (7) days at 01:15 AM Sundays. 
-RUN printf '# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n' > /etc/crontabs/xteve
-RUN printf '# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username@domain.com -p ******** -U -o $XTEVE_CONF/data/zap2xml.xml\n' >> /etc/crontabs/xteve
-
-# Configure container mappings
+# Configure container volume mappings
 VOLUME $XTEVE_CONF
 VOLUME $XTEVE_TEMP
 
@@ -67,4 +67,4 @@ VOLUME $XTEVE_TEMP
 EXPOSE 34400
 
 # Run the xTeVe init script
-ENTRYPOINT ["/home/xteve/bin/xteve_starter.pl"]
+ENTRYPOINT $XTEVE_BIN/xteve_starter.pl
