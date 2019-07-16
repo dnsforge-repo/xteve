@@ -64,7 +64,7 @@ if ( $TZ !~ /America\/New_York/ ) {
 open CRONFILE, ">>$CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: $!";
 	print CRONFILE "# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n";
 	print CRONFILE "# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username\@domain.com -p ******** -U -o $XTEVE_CONF/data/zap2xml.xml\n";
-close PROFILE;
+close CRONFILE;
 
 open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
 	print PROFILE "\n# Set custom \$USER Environment\n";
