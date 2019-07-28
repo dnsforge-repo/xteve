@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.1
+# ; Rev    : v1.0.2
 # ; Date   : 6/25/2019
-# ; Last Modification: 7/14/2019
+# ; Last Modification: 7/28/2019
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;

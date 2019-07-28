@@ -5,7 +5,7 @@ RUN apk add --no-cache ca-certificates
 
 MAINTAINER LeeD <hostmaster@dnsforge.com>
 
-LABEL VERSION=1.0.1
+LABEL VERSION=1.0.2
 LABEL SUPPORT_URL=https://discord.gg/eWYquha
 
 ENV XTEVE_USER=xteve
@@ -17,6 +17,7 @@ ENV XTEVE_BIN=/home/xteve/bin
 ENV XTEVE_CONF=/home/xteve/conf
 ENV XTEVE_PORT=34400
 ENV XTEVE_LOG=/var/log/xteve.log
+ENV XTEVE_URL=https://github.com/dnsforge-repo/xteve-test/blob/master/xteve-2.0.tar.gz?raw=true
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 
@@ -47,8 +48,8 @@ perl-lwp-useragent-determined
 
 # Pull the required binaries for xTeVe, Guide2go and Zap2XML from the repos.
 ADD /bin/xteve_starter.pl $XTEVE_BIN/xteve_starter.pl
-#ADD https://xteve.de:9443/download/?os=linux&arch=amd64&name=xteve&beta=false $XTEVE_BIN/xteve
-ADD /bin/xteve $XTEVE_BIN/xteve
+RUN wget $XTEVE_URL -O xteve-2.0.tar.gz \
+&& tar zxfvp xteve-2.0.tar.gz -C $XTEVE_BIN && rm -f $XTEVE_HOME/xteve-2.0.tar.gz
 ADD /bin/guide2go $XTEVE_BIN/guide2go
 ADD /bin/guide2go.json $GUIDE2GO_CONF/guide2go.json
 ADD /bin/zap2xml.pl $XTEVE_BIN/zap2xml.pl
