@@ -15,9 +15,10 @@ ENV XTEVE_HOME=/home/xteve
 ENV XTEVE_TEMP=/tmp/xteve
 ENV XTEVE_BIN=/home/xteve/bin
 ENV XTEVE_CONF=/home/xteve/conf
+ENV XTEVE_TEMPLATES=/home/xteve/templates
 ENV XTEVE_PORT=34400
 ENV XTEVE_LOG=/var/log/xteve.log
-ENV XTEVE_URL=https://github.com/dnsforge-repo/xteve-test/blob/master/xteve-2.0.tar.gz?raw=true
+ENV XTEVE_URL=https://github.com/xteve-project/xTeVe-Downloads/blob/master/xteve_linux_amd64.tar.gz?raw=true
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 
@@ -48,10 +49,10 @@ perl-lwp-useragent-determined
 
 # Pull the required binaries for xTeVe, Guide2go and Zap2XML from the repos.
 ADD /bin/xteve_starter.pl $XTEVE_BIN/xteve_starter.pl
-RUN wget $XTEVE_URL -O xteve-2.0.tar.gz \
-&& tar zxfvp xteve-2.0.tar.gz -C $XTEVE_BIN && rm -f $XTEVE_HOME/xteve-2.0.tar.gz
+RUN wget $XTEVE_URL -O xteve_linux_amd64.tar.gz \
+&& tar zxfvp xteve_linux_amd64.tar.gz -C $XTEVE_BIN && rm -f $XTEVE_HOME/xteve_linux_amd64.tar.gz
 ADD /bin/guide2go $XTEVE_BIN/guide2go
-ADD /bin/guide2go.json $GUIDE2GO_CONF/guide2go.json
+ADD /bin/guide2go.json $XTEVE_TEMPLATES/guide2go.json
 ADD /bin/zap2xml.pl $XTEVE_BIN/zap2xml.pl
 
 # Set binary executable permissions.
@@ -63,6 +64,7 @@ RUN chmod +rx $XTEVE_BIN/zap2xml.pl
 # Configure container volume mappings
 VOLUME $XTEVE_CONF
 VOLUME $XTEVE_TEMP
+VOLUME $GUIDE2GO_CONF
 
 # Set default container port 
 EXPOSE 34400

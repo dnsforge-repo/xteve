@@ -25,6 +25,8 @@
 # ;
 ############################################################################
 
+use File::Copy;
+
 $XTEVE_USER = $ENV{'XTEVE_USER'};
 $XTEVE_UID  = $ENV{'XTEVE_UID'};
 $XTEVE_GID  = $ENV{'XTEVE_GID'};
@@ -32,6 +34,7 @@ $XTEVE_HOME = $ENV{'XTEVE_HOME'};
 $XTEVE_TEMP = $ENV{'XTEVE_TEMP'};
 $XTEVE_BIN  = $ENV{'XTEVE_BIN'};
 $XTEVE_CONF = $ENV{'XTEVE_CONF'};
+$XTEVE_TEMPLATES = $ENV{'XTEVE_TEMPLATES'};
 $XTEVE_PORT = $ENV{'XTEVE_PORT'};
 $XTEVE_LOG  = $ENV{'XTEVE_LOG'};
 $GUIDE2GO_HOME = $ENV{'GUIDE2GO_HOME'};
@@ -60,6 +63,8 @@ if ( $TZ !~ /America\/New_York/ ) {
 	unlink("/etc/localtime","/etc/timezone");
 	system("/bin/ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone");
 }
+
+copy ("$XTEVE_TEMPLATES/guide2go.json","$GUIDE2GO_CONF/guide2go.json");
 
 open CRONFILE, ">>$CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: $!";
 	print CRONFILE "# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n";
