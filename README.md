@@ -262,7 +262,8 @@ from a command prompt terminal inside the container.  You will need to add the g
 In addition a sample crontab has been created to run the zap2XML configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run  <b>'crontab -e -u xteve'</b> from a command prompt terminal 
 inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/zap2xml.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The sample crontab runs at 1:15 AM on sundays.
 
-<p><b>/usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username@domain.com -p password -U -o $XTEVE_CONF/data/zap2xml.xml</b></p>
+<p><b>/usr/bin/perl /home/xteve/bin/zap2xml.pl -u username@domain.com -p  ******** -U -c $XTEVE_HOME/cache/zap2xml -o
+$XTEVE_CONF/data/zap2xml.xml</b></p>
 
 <br>
 <br>
@@ -271,7 +272,8 @@ inside the container. You will need to add the zap2XML XMLTV file located in <b>
 
 Support for tvguide.com is also now available in this image.  A sample crontab has been created to run the zap2XML TVGuide configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run  <b>'crontab -e -u xteve'</b> from a command prompt terminal inside the container. You will need to add the zap2XML TVGuide XMLTV file located in <b>$XTEVE_CONF/data/tvguide.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The sample crontab runs at 1:15 AM on sundays.
 
-<p><b>/usr/bin/perl $XTEVE_BIN/zap2xml.pl -z -u username@domain.com -p ******** -U -o /home/xteve/conf/data/tvguide.xml</b></p>
+<p><b>/usr/bin/perl /home/xteve/bin/zap2xml.pl -z -u username@domain.com -p ******** -U -c $XTEVE_HOME/cache/tvguide -o $XTEVE_CONF/data/tvguide.xml</b></p>
 
 
 Enjoy!
+
