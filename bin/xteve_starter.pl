@@ -94,8 +94,8 @@ open CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: 
 	print CRONFILE "# +- - - - - - - - minute (0 - 59)\n";
 	print CRONFILE "#\n";
 	print CRONFILE "# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n";
-	print CRONFILE "# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username\@domain.com -p ******** -U -o $XTEVE_CONF/data/zap2xml.xml\n";
-	print CRONFILE "# Run TVGuide crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -z -u username\@domain.com -p ******** -U -o $XTEVE_CONF/data/tvguide.xml\n";
+	print CRONFILE "# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username\@domain.com -p ******** -U -c $XTEVE_HOME/cache/zap2xml -o $XTEVE_CONF/data/zap2xml.xml\n";
+	print CRONFILE "# Run TVGuide crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -z -u username\@domain.com -p ******** -U -c $XTEVE_HOME/cache/tvguide -o $XTEVE_CONF/data/tvguide.xml\n";
 close CRONFILE;
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");

@@ -56,6 +56,9 @@ ADD /bin/guide2go $XTEVE_BIN/guide2go
 ADD /bin/guide2go.json $XTEVE_TEMPLATES/guide2go.json
 ADD /bin/zap2xml.pl $XTEVE_BIN/zap2xml.pl
 
+# Create XML cache directory
+RUN mkdir $XTEVE_HOME/cache && mkdir $XTEVE_HOME/cache/guide2go
+
 # Set binary executable permissions.
 RUN chmod +x $XTEVE_BIN/xteve_starter.pl
 RUN chmod +x $XTEVE_BIN/xteve
