@@ -5,7 +5,7 @@ RUN apk add --no-cache ca-certificates
 
 MAINTAINER LeeD <hostmaster@dnsforge.com>
 
-LABEL VERSION=1.0.2
+LABEL VERSION=1.0.3
 LABEL SUPPORT_URL=https://discord.gg/eWYquha
 
 ENV XTEVE_USER=xteve
@@ -18,6 +18,7 @@ ENV XTEVE_CONF=/home/xteve/conf
 ENV XTEVE_TEMPLATES=/home/xteve/templates
 ENV XTEVE_PORT=34400
 ENV XTEVE_LOG=/var/log/xteve.log
+ENV XTEVE_DEBUG=0
 ENV XTEVE_URL=https://github.com/xteve-project/xTeVe-Downloads/blob/master/xteve_linux_amd64.tar.gz?raw=true
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
@@ -67,7 +68,7 @@ VOLUME $XTEVE_TEMP
 VOLUME $GUIDE2GO_CONF
 
 # Set default container port 
-EXPOSE 34400
+EXPOSE $XTEVE_PORT
 
 # Run the xTeVe init script
 ENTRYPOINT $XTEVE_BIN/xteve_starter.pl
