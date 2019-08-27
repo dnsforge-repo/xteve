@@ -1,5 +1,5 @@
 {
-  "file.cache": "/home/xteve/guide2go/conf/cache_guide2go.json",
+  "file.cache": "/home/xteve/cache/guide2go/cache_guide2go.json",
   "file.output": "/home/xteve/conf/data/guide2go.xml",
   "poster.aspect": "all",
   "schedule.days": 7,
