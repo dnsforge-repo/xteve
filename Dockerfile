@@ -5,7 +5,7 @@ RUN apk add --no-cache ca-certificates
 
 MAINTAINER LeeD <hostmaster@dnsforge.com>
 
-LABEL VERSION=1.0.3
+LABEL VERSION=1.0.4
 LABEL SUPPORT_URL=https://discord.gg/eWYquha
 
 ENV XTEVE_USER=xteve
@@ -18,6 +18,7 @@ ENV XTEVE_CONF=/home/xteve/conf
 ENV XTEVE_TEMPLATES=/home/xteve/templates
 ENV XTEVE_PORT=34400
 ENV XTEVE_LOG=/var/log/xteve.log
+ENV XTEVE_BRANCH=master
 ENV XTEVE_DEBUG=0
 ENV XTEVE_URL=https://github.com/xteve-project/xTeVe-Downloads/blob/master/xteve_linux_amd64.tar.gz?raw=true
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
@@ -37,6 +38,9 @@ RUN apk add --no-cache bash busybox-suid su-exec
 RUN apk update && apk add --no-cache tzdata
 ENV TZ=America/New_York
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Add VideoLAN & ffmpeg support
+RUN apk add --no-cache vlc ffmpeg
 
 # Install Perl for Zap2it support
 RUN apk add --no-cache \
