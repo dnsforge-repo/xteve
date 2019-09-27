@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.3
+# ; Rev    : v1.0.4
 # ; Date   : 6/25/2019
-# ; Last Modification: 8/24/2019
+# ; Last Modification: 9/27/2019
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -37,6 +37,7 @@ $XTEVE_CONF      = $ENV{'XTEVE_CONF'};
 $XTEVE_TEMPLATES = $ENV{'XTEVE_TEMPLATES'};
 $XTEVE_PORT      = $ENV{'XTEVE_PORT'};
 $XTEVE_LOG       = $ENV{'XTEVE_LOG'};
+$XTEVE_BRANCH    = $ENV{'XTEVE_BRANCH'};
 $XTEVE_DEBUG     = $ENV{'XTEVE_DEBUG'};
 $GUIDE2GO_HOME   = $ENV{'GUIDE2GO_HOME'};
 $GUIDE2GO_CONF   = $ENV{'GUIDE2GO_CONF'};
@@ -59,15 +60,8 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/chmod -R g+s $XTEVE_HOME");
 	system("/bin/chmod -R g+s $XTEVE_TEMP");
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
-
-if ( $XTEVE_DEBUG > 3 ) {
-	$XTEVE_DEBUG = 3;
-}
-
-if ( $TZ !~ /America\/New_York/ ) {
-	unlink("/etc/localtime","/etc/timezone");
-	system("/bin/ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone");
-}
+	print "Executing: Checking System Configuration..\n";
+	&verify_setup();
 
 copy ("$XTEVE_TEMPLATES/guide2go.json","$GUIDE2GO_CONF/guide2go.json");
 
@@ -117,6 +111,7 @@ open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
 	print PROFILE "export GUIDE2GO_CONF=$GUIDE2GO_CONF\n";
 close PROFILE;
 }
+&verify_setup();
 print "Executing: Starting xTeVe and crond services...\n";
 print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/eWYquha\n";
 print "Executing: Info: xTeVe DEBUG mode [$XTEVE_DEBUG] initilized..\n" if $XTEVE_DEBUG > 0;
@@ -124,5 +119,30 @@ print "[xTeVe]: Log File: $XTEVE_LOG\n";
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_HOME");
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_TEMP");
 system("/usr/sbin/crond -l 2 -f -L /var/log/cron.log &");
-exec("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT -debug=$XTEVE_DEBUG >> $XTEVE_LOG 2>&1");
 
+if ( $XTEVE_BRANCH =~ /beta/ ) {
+	exec("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT -branch=$XTEVE_BRANCH -debug=$XTEVE_DEBUG >> $XTEVE_LOG 2>&1");
+}
+else {
+	exec("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/xteve -config=$XTEVE_CONF -port=$XTEVE_PORT -debug=$XTEVE_DEBUG >> $XTEVE_LOG 2>&1");
+}
+
+##################################################################################################################
+# ;
+# ; xteve_starter.pl: Program Subroutines
+# ;
+# ;
+##################################################################################################################
+
+sub verify_setup {
+if ( $XTEVE_BRANCH !~ /master|beta/ ) {
+	 $XTEVE_BRANCH = "master";
+}
+if ( $XTEVE_DEBUG > 3 ) {
+	 $XTEVE_DEBUG = 3;
+}
+if ( $TZ !~ /America\/New_York/ ) {
+	 unlink("/etc/localtime","/etc/timezone");
+	 system("/bin/ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone");
+	 }
+}
