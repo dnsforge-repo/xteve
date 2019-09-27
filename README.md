@@ -29,8 +29,9 @@ xTeVe emulates a SiliconDust HDHomeRun OTA tuner, which allows it to expose IPTV
 <ul>
 <li>xTeVe v2.0 (Linux) x86 64 bit</li>
 <li>Guide2go (Linux) x86 64 bit  (Schedules Direct XMLTV grabber)</li>
-<li>Zap2XML Support  (Perl based zap2it XMLTV grabber)</li>
+<li>Zap2XML Support  (Perl based zap2it / TVguide.com XMLTV grabber)</li>
 <li>Bash, Perl & crond Support</li>
+<li>VLC & ffmpeg Support (BETA)</li>
 <li>Sample config's and crons</li>
 <li>Runs as  unprivileged user</li>
 </ul>
@@ -155,6 +156,10 @@ This container is configured with the following default environmental variables,
 <td>Enable auto restart for this container</td>
 </tr>
 <tr>
+<td>-e TZ=Europe/London</td>
+<td>Set custom Locale</td>
+</tr>
+<tr>
 <td>-p 34400</td>
 <td>Default container port mapping [ 127.0.0.1:34400:34400 ]</td>
 </tr>
@@ -163,8 +168,8 @@ This container is configured with the following default environmental variables,
 <td>Set custom xTeVe Port</td>
 </tr>
 <tr>
-<td>-e TZ=Europe/London</td>
-<td>Set custom Locale</td>
+<td>-e XTEVE_BRANCH=beta</td>
+<td>Set xTeVe git branch [ master|beta ] Default: master
 </tr>
 <tr>
 <td>-e XTEVE_DEBUG=1</td>
@@ -276,4 +281,3 @@ Support for tvguide.com is also now available in this image.  A sample crontab h
 
 
 Enjoy!
-
