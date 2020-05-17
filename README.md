@@ -31,7 +31,7 @@ xTeVe emulates a SiliconDust HDHomeRun OTA tuner, which allows it to expose IPTV
 <li>Guide2go (Linux) x86 64 bit  (Schedules Direct XMLTV grabber)</li>
 <li>Zap2XML Support  (Perl based zap2it / TVguide.com XMLTV grabber)</li>
 <li>Bash, Perl & crond Support</li>
-<li>VLC & ffmpeg Support (BETA)</li>
+<li>VLC & ffmpeg Support</li>
 <li>Sample config's and crons</li>
 <li>Runs as  unprivileged user</li>
 </ul>
@@ -43,6 +43,19 @@ xTeVe emulates a SiliconDust HDHomeRun OTA tuner, which allows it to expose IPTV
 The recommended <b>default</b> container settings are listed in the docker run command listed below:
 
 <p><b> docker run -it -d --name=xteve --network=host --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+
+<br>
+
+<br>
+
+<h2 >Isolated (bridge) mode</h2>
+<p>To isolate the container in bridge mode use 'docker run' as follows.  **Only use bridge mode if you fully understand its use**  Generally for most users we recommend host mode. 
+
+<br>
+
+In bridge mode the docker container will assign it's own dockernet ip address (usually in the 172.17.x network).</p>
+
+<p><b>docker run -it -d --name=xteve -p 34400:34400 --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
 
 <br>
 
@@ -208,14 +221,12 @@ Run the container with the 'docker run' command with any desired parameters from
 <p><b>docker run -it -d --name=xteve --network=host --restart=always  -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b>
 
 <br>
-
 <br>
 
 <p>Linux with Guide2go:</p>
 <p><b>docker run -it -d --name=xteve --network=host --restart=always  -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve -v ~/guide2go_conf:/home/xteve/guide2go/conf dnsforge/xteve:latest</b>
 
 <br>
-
 <br>
 
 <h2 >Synology</h2>
@@ -245,9 +256,34 @@ To use this feature you will need to purchase a <a href="http://www.schedulesdir
 
 <p><b>guide2go -configure $GUIDE2GO_CONF/guide2go.json</b></p>
 
-Provide your Schedules Direct username and password when prompted and then configure your lineup and channels using these options: 
-2. Add lineup  [ Enter your postcode/zip and select a TV provider lineup in your local area ]
-4. Manage channels [ Select the channels to populate in your lineup or type "ALL" for all channels in the lineup ]
+<p>Provide your Schedules Direct username and password when prompted and then configure your lineup and channels using these options:</p>
+
+<br>
+<br>
+
+<p><b>Select "2. Add lineup" from the menu</b></p>
+
+Choose Country
+
+Choose Postcode
+
+Choose Provider
+
+<br>
+<br>
+
+<p><b>Select "4. Manage channels" from the menu</b></p>
+
+Choose "ALL" for your selected lineup.  
+
+<p> <b> NOTE: We do NOT recommend adding more than (1) Lineup to the guide2go.json configuration.  If you want to run multiple
+lineups, follow the directions below for "Additional Guide2go Lineups".</b></p>
+
+<p>Choose "0" to exit and then <b>manually run the command below</b> for the first time to generate the XMLTV file.</p>
+
+<br>
+
+<p><b>guide2go -config $GUIDE2GO_CONF/guide2go.json</b></p>
 
 <br>
 <br>
@@ -258,6 +294,64 @@ Additionally a sample crontab has been created to run the guide2go configuration
 from a command prompt terminal inside the container.  You will need to add the guide2go XMLTV file located in <b>$XTEVE_CONF/data/guide2go.xml</b>  to  <b>xTeVe->XMLTV</b> once it has been generated on the first run. The sample crontab runs at 1:15 AM on sundays.
 
 <p><b>guide2go -config $GUIDE2GO_CONF/guide2go.json</b></p>
+
+<br>
+<br>
+
+<h2 id="Additional Guide2go Lineups">Additional Guide2go Lineups</h2>
+
+You can have up to (4) separate guide2go lineups with one SD subscription.  If you choose to create additional lineups we recommend you create separate guide2go
+configuration  (JSON) files for each one.  Follow the following steps to create additional lineups and crons.
+
+<br>
+
+<p><b>guide2go -configure $GUIDE2GO_CONF/new-provider.json</b></p>
+
+Enter your credentials if prompted.
+
+<br>
+<br>
+
+<p><b>Select "2. Add lineup" from the menu</b></p>
+
+Choose Country
+
+Choose Postcode
+
+Choose Provider
+
+<br>
+<br>
+
+<p><b>Select "4. Manage channels" from the menu</b></p>
+
+Choose "NONE" for your original lineup
+
+Choose "ALL" for your new lineup
+
+Choose "0" to exit
+
+<br>
+
+The JSON file will now be written to <b>$GUIDE2GO_CONF/new-provider.json</b>
+
+<br>
+<br>
+
+<p><b>Run your new lineup to generate the $XTEVE_CONF/data/new-provider.json.xml</b></p>
+guide2go -config $GUIDE2GO_CONF/new-provider.json</b></p>
+
+<br>
+<br>
+
+<p><b>Add a cron for your new lineup by editing the crontab, simply clone the existing cron to run any other lineups you have created.</b></p>
+
+<p><b>crontab -e -u xteve</b></p>
+
+<br>
+
+<p># Run Schedules Direct crontab every Sunday at 1:15 AM EST</p>                                                                                    
+<p>15  1  *  *  0   /home/xteve/bin/guide2go -config /home/xteve/guide2go/conf/new-provider.json</p>
 
 <br>
 <br>

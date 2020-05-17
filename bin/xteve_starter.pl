@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.4
+# ; Rev    : v1.0.5.
 # ; Date   : 6/25/2019
-# ; Last Modification: 9/27/2019
+# ; Last Modification: 5/12/2020
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -33,12 +33,14 @@ $XTEVE_GID       = $ENV{'XTEVE_GID'};
 $XTEVE_HOME      = $ENV{'XTEVE_HOME'};
 $XTEVE_TEMP      = $ENV{'XTEVE_TEMP'};
 $XTEVE_BIN       = $ENV{'XTEVE_BIN'};
+$XTEVE_CACHE     = $ENV{'XTEVE_CACHE'};
 $XTEVE_CONF      = $ENV{'XTEVE_CONF'};
-$XTEVE_TEMPLATES = $ENV{'XTEVE_TEMPLATES'};
 $XTEVE_PORT      = $ENV{'XTEVE_PORT'};
 $XTEVE_LOG       = $ENV{'XTEVE_LOG'};
 $XTEVE_BRANCH    = $ENV{'XTEVE_BRANCH'};
 $XTEVE_DEBUG     = $ENV{'XTEVE_DEBUG'};
+$XTEVE_API       = $ENV{'XTEVE_API'};
+$XTEVE_VERSION   = $ENV{'XTEVE_VERSION'};
 $GUIDE2GO_HOME   = $ENV{'GUIDE2GO_HOME'};
 $GUIDE2GO_CONF   = $ENV{'GUIDE2GO_CONF'};
 
@@ -50,7 +52,7 @@ $XTEVE_CRONDIR   = "$XTEVE_CONF/cron";
 
 if ( !-e "$XTEVE_HOME/.xteve.run") {
 	print "Executing: Installation of Perl Modules...\n";
-	system("/usr/bin/perl -MCPAN -e \"install JSON::XS\" >/var/log/xteve_start.log 2>&1");
+	system("/usr/bin/perl -MCPAN -e \"install JSON::XS\" >/var/log/xteve_starter.log 2>&1");
 	print "Executing: Add xTeVe user and group...\n";
 	system("/usr/sbin/addgroup -g \"$XTEVE_GID\" \"$XTEVE_USER\"");
 	sleep (1);
@@ -62,8 +64,7 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
 	print "Executing: Checking System Configuration..\n";
 	&verify_setup();
-
-copy ("$XTEVE_TEMPLATES/guide2go.json","$GUIDE2GO_CONF/guide2go.json");
+	&update_settings();
 
 if ( !-e "$XTEVE_CRONDIR" ) {
 	mkdir $XTEVE_CRONDIR, 0755;
@@ -87,10 +88,15 @@ open CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: 
 	print CRONFILE "# | +- - - - - - - hour (0 - 23)\n";
 	print CRONFILE "# +- - - - - - - - minute (0 - 59)\n";
 	print CRONFILE "#\n";
-	print CRONFILE "# Run Schedules Direct crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   $XTEVE_BIN/guide2go -config $GUIDE2GO_CONF/guide2go.json\n";
-	print CRONFILE "# Run Zap2XML crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -u username\@domain.com -p ******** -U -c $XTEVE_HOME/cache/zap2xml -o $XTEVE_CONF/data/zap2xml.xml\n";
-	print CRONFILE "# Run TVGuide crontab every Sunday at 1:15 AM EST\n15  1  *  *  0   /usr/bin/perl $XTEVE_BIN/zap2xml.pl -z -u username\@domain.com -p ******** -U -c $XTEVE_HOME/cache/tvguide -o $XTEVE_CONF/data/tvguide.xml\n";
-close CRONFILE;
+	print CRONFILE "# To create your lineups for guide2go, zap2it and tvguide please see the examples below to create them with the guide2conf utility.\n";
+	print CRONFILE "# Usage: $XTEVE_BIN/guide2conf -h\n";
+	print CRONFILE "#\n";
+	print CRONFILE "# Guide2go:\n";
+	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username> --password <password> --name <lineup_name>\n";
+	print CRONFILE "# Zap2it & TVGuide:\n";
+	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username\@domain.com> --password <password> --name <lineup_name>\n";
+	print CRONFILE "#\n";
+	close CRONFILE;
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");
 }
@@ -104,14 +110,18 @@ open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
 	print PROFILE "\n# Set custom \$USER Environment\n";
 	print PROFILE "export PATH=$PATH\n";
 	print PROFILE "export TZ=$TZ\n";
+	print PROFILE "export XTEVE_API=$XTEVE_API\n";
 	print PROFILE "export XTEVE_BIN=$XTEVE_BIN\n";
 	print PROFILE "export XTEVE_CONF=$XTEVE_CONF\n";
 	print PROFILE "export XTEVE_HOME=$XTEVE_HOME\n";
+	print PROFILE "export XTEVE_VERSION=$XTEVE_VERSION\n";
 	print PROFILE "export GUIDE2GO_HOME=$GUIDE2GO_HOME\n";
 	print PROFILE "export GUIDE2GO_CONF=$GUIDE2GO_CONF\n";
 close PROFILE;
 }
+&check_api();
 &verify_setup();
+print "Executing: Version: xTeVe Docker Edition $XTEVE_VERSION\n";
 print "Executing: Starting xTeVe and crond services...\n";
 print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/eWYquha\n";
 print "Executing: Info: xTeVe DEBUG mode [$XTEVE_DEBUG] initilized..\n" if $XTEVE_DEBUG > 0;
@@ -145,4 +155,79 @@ if ( $TZ !~ /America\/New_York/ ) {
 	 unlink("/etc/localtime","/etc/timezone");
 	 system("/bin/ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone");
 	 }
+}
+
+sub check_api {
+open SETTINGS, "$XTEVE_CONF/settings.json";
+open T_SETTINGS, ">$XTEVE_CONF/settings.json.tmp";
+                                                  
+	while ( $reader = <SETTINGS> ) {
+    chomp $reader;
+	print T_SETTINGS "$reader\n" unless $reader =~ /\"api\"/;
+																                                                                   
+	if ( $reader =~ /\"api\"/ ) {
+    if ( $XTEVE_API ==0 ) {
+			print T_SETTINGS "  \"api\": false,\n";
+    }
+    elsif ( $XTEVE_API ==1 ) {
+	        print T_SETTINGS "  \"api\": true,\n";
+           }
+	}
+} 
+close SETTINGS;
+close T_SETTINGS;
+copy("$XTEVE_CONF/settings.json.tmp","$XTEVE_CONF/settings.json");
+unlink("$XTEVE_CONF/settings.json.tmp");
+}
+
+sub update_settings {
+open SETTINGS, ">$XTEVE_CONF/settings.json";
+
+        if ( $XTEVE_API ==0 ) {
+                print SETTINGS "\{\n  \"api\": false,\n";
+}
+        elsif ( $XTEVE_API ==1 ) {
+                print SETTINGS "\{\n  \"api\": true,\n";
+}
+print SETTINGS "  \"authentication.api\": false,\n";
+print SETTINGS "  \"authentication.m3u\": false,\n";
+print SETTINGS "  \"authentication.pms\": false,\n";
+print SETTINGS "  \"authentication.web\": false,\n";
+print SETTINGS "  \"authentication.xml\": false,\n";
+print SETTINGS "  \"backup.keep\": 10,\n";
+print SETTINGS "  \"backup.path\": \"/home/xteve/conf/backup/\",\n";
+print SETTINGS "  \"git.branch\": \"$XTEVE_BRANCH\",\n";
+print SETTINGS "  \"buffer\": \"-\",\n";
+print SETTINGS "  \"buffer.size.kb\": 1024,\n";
+print SETTINGS "  \"buffer.timeout\": 500,\n";
+print SETTINGS "  \"cache.images\": false,\n";
+print SETTINGS "  \"epgSource\": \"PMS\",\n";
+print SETTINGS "  \"ffmpeg.options\": \"-hide_banner -loglevel error -i [URL] -c copy -f mpegts pipe:1\",\n";
+print SETTINGS "  \"ffmpeg.path\": \"/usr/bin/ffmpeg\",\n";
+print SETTINGS "  \"vlc.options\": \"-I dummy [URL] --sout #std{mux=ts,access=file,dst=-}\",\n";
+print SETTINGS "  \"vlc.path\": \"/usr/bin/cvlc\",\n";
+print SETTINGS "  \"files\": {\n";
+print SETTINGS "    \"hdhr\": {},\n";
+print SETTINGS "    \"m3u\": {},\n";
+print SETTINGS "    \"xmltv\": {}\n";
+print SETTINGS "  \},\n";
+print SETTINGS "  \"files.update\": true,\n";
+print SETTINGS "  \"filter\": {},\n";
+print SETTINGS "  \"language\": \"en\",\n";
+print SETTINGS "  \"log.entries.ram\": 500,\n";
+print SETTINGS "  \"m3u8.adaptive.bandwidth.mbps\": 10,\n";
+print SETTINGS "  \"mapping.first.channel\": 1000,\n";
+print SETTINGS "  \"port\": \"$XTEVE_PORT\",\n";
+print SETTINGS "  \"ssdp\": true,\n";
+print SETTINGS "  \"temp.path\": \"/tmp/xteve/\",\n";
+print SETTINGS "  \"tuner\": 1,\n";
+print SETTINGS " \"update\": [\n";
+print SETTINGS "    \"0000\"\n";
+print SETTINGS "  ],\n";
+print SETTINGS "  \"user.agent\": \"xTeVe\",\n";
+print SETTINGS "  \"uuid\": \"2020-05-AQFE-R1QOU8\",\n";
+print SETTINGS "  \"version\": \"2.1.0\",\n";
+print SETTINGS "  \"xepg.replace.missing.images\": true,\n";
+print SETTINGS "  \"xteveAutoUpdate\": true\n";
+print SETTINGS "\}";
 }
