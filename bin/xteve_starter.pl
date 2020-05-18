@@ -4,7 +4,7 @@
 # ; Author : LeeD <hostmaster@dnsforge.com>
 # ; Rev    : v1.0.5.
 # ; Date   : 6/25/2019
-# ; Last Modification: 5/17/2020
+# ; Last Modification: 5/18/2020
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -64,7 +64,7 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
 	print "Executing: Checking System Configuration..\n";
 	print "\nExecuting: Info: [ ** Attention GUIDE2GO USERS!!! ** ]\n";
-	print "Executing: Info: [ Please regenerate your lineups : - guide2conf --username <username> --password <password> --name USA-DIRECTV7 ]\n\n";
+	print "Executing: Info: [ ** Please regenerate your lineups : - guide2conf --username <username> --password <password> --name <lineup> ** ]\n\n";
 	&verify_setup();
 	&update_settings();
 
@@ -164,17 +164,17 @@ open SETTINGS, "$XTEVE_CONF/settings.json";
 open T_SETTINGS, ">$XTEVE_CONF/settings.json.tmp";
                                                   
 	while ( $reader = <SETTINGS> ) {
-    chomp $reader;
+    	chomp $reader;
 	print T_SETTINGS "$reader\n" unless $reader =~ /\"api\"/;
 																                                                                   
 	if ( $reader =~ /\"api\"/ ) {
-    if ( $XTEVE_API ==0 ) {
+   	 if ( $XTEVE_API ==0 ) {
 			print T_SETTINGS "  \"api\": false,\n";
-    }
-    elsif ( $XTEVE_API ==1 ) {
+    	}
+    	elsif ( $XTEVE_API ==1 ) {
 	        print T_SETTINGS "  \"api\": true,\n";
-           }
-	}
+        }
+     }
 } 
 close SETTINGS;
 close T_SETTINGS;
@@ -183,11 +183,12 @@ unlink("$XTEVE_CONF/settings.json.tmp");
 }
 
 sub update_settings {
+if ( ! -e "$XTEVE_CONF/settings.json" ) {
 open SETTINGS, ">$XTEVE_CONF/settings.json";
 
-        if ( $XTEVE_API ==0 ) {
+	if ( $XTEVE_API ==0 ) {
                 print SETTINGS "\{\n  \"api\": false,\n";
-}
+	}
         elsif ( $XTEVE_API ==1 ) {
                 print SETTINGS "\{\n  \"api\": true,\n";
 }
@@ -232,4 +233,8 @@ print SETTINGS "  \"version\": \"2.1.0\",\n";
 print SETTINGS "  \"xepg.replace.missing.images\": true,\n";
 print SETTINGS "  \"xteveAutoUpdate\": true\n";
 print SETTINGS "\}";
+}
+else {
+	&check_api();
+	}
 }
