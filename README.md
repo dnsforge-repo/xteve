@@ -1,3 +1,9 @@
+<a href="https://microbadger.com/images/dnsforge/xteve" title="Get your own version badge on microbadger.com"><img src="https://images.microbadger.com/badges/version/dnsforge/xteve.svg"></a>
+
+<br>
+
+<br>
+
 <h1 id="xTeVe><a href="https://xteve.de/">xTeVe Docker Edition v2.0</a></h1>
 <a href="https://xteve.de"><p><b>Recommended by xteve.de</b></p></a>
 <tr>

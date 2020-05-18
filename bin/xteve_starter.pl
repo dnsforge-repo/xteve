@@ -4,7 +4,7 @@
 # ; Author : LeeD <hostmaster@dnsforge.com>
 # ; Rev    : v1.0.5.
 # ; Date   : 6/25/2019
-# ; Last Modification: 5/12/2020
+# ; Last Modification: 5/17/2020
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -63,6 +63,8 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/chmod -R g+s $XTEVE_TEMP");
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
 	print "Executing: Checking System Configuration..\n";
+	print "\nExecuting: Info: [ ** Attention GUIDE2GO USERS!!! ** ]\n";
+	print "Executing: Info: [ Please regenerate your lineups : - guide2conf --username <username> --password <password> --name USA-DIRECTV7 ]\n\n";
 	&verify_setup();
 	&update_settings();
 

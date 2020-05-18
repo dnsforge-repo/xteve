@@ -3,10 +3,14 @@ RUN apk update
 RUN apk upgrade
 RUN apk add --no-cache ca-certificates
 
-MAINTAINER LeeD <hostmaster@dnsforge.com>
 
-LABEL VERSION=1.0.5
-LABEL SUPPORT_URL=https://discord.gg/eWYquha
+ARG XTEVE_VERSION
+
+LABEL org.label-schema.version="${XTEVE_VERSION}" \
+      org.label-schema.schema-version="1.0" \
+	  MAINTAINER="hostmaster@dnsforge.com" \
+      SUPPORT_URL="https://xteve.dnsforge.net" \
+      DISCORD_URL="https://discord.gg/eWYquha"
 
 ENV XTEVE_USER=xteve
 ENV XTEVE_UID=31337
