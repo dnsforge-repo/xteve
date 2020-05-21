@@ -1,10 +1,11 @@
+<a href="https://microbadger.com/images/dnsforge/xteve" title="Get your own image badge on microbadger.com"><img src="https://images.microbadger.com/badges/image/dnsforge/xteve.svg"></a>
 <a href="https://microbadger.com/images/dnsforge/xteve" title="Get your own version badge on microbadger.com"><img src="https://images.microbadger.com/badges/version/dnsforge/xteve.svg"></a>
 
 <br>
 
 <br>
 
-<h1 id="xTeVe><a href="https://xteve.de/">xTeVe Docker Edition v2.0</a></h1>
+<h1 id="xTeVe><a href="https://xteve.de/">xTeVe Docker Edition</a></h1>
 <a href="https://xteve.de"><p><b>Recommended by xteve.de</b></p></a>
 <tr>
 <br>
@@ -14,9 +15,22 @@ Image Maintainer:  <b>LeeD </b>\<hostmaster@dnsforge.com\></a>
 For support come visit us at our xTeVe Discord channel:
 https://discord.gg/eWYquha
 
-<p <b>Existing Users:  To migrate to the latest v2.0 docker image simply install this docker and restore from a backup of version v1.4.4 or later.</b></p>
+<br>
 
-<tr>
+<br>
+
+<p> <b> ** ATTENTION GUIDE2GO USERS !!! ** </b> </p>
+<p> <b> The Guide2go configuration format has changed from JSON to YAML as of xTeVe DE release <b>v1.0.5.</b>  Please reconfigure your lineups as follows: </b></p>
+
+<br>
+
+<p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --name</b> < lineup_name > </p>
+
+<br>
+
+<p><b> This tool will run your lineup and give you the option of automatically adding a cron job for automated daily downloads. Automated cron's run at 1:15 AM daily.</b></p>
+
+<p><b>You can modify the cron run time with 'crontab -e -u xteve' from the container's command line.</b></p>
 
 <br>
 
@@ -28,17 +42,19 @@ https://discord.gg/eWYquha
 
 xTeVe is a M3U proxy server for Plex, Emby and any client and provider which supports the .TS and .M3U8 (HLS) streaming formats.
 
-xTeVe emulates a SiliconDust HDHomeRun OTA tuner, which allows it to expose IPTV style channels to software, which would not normally support it.  This Docker image includes the following packages and features:
+<p>xTeVe emulates a SiliconDust HDHomeRun OTA tuner, which allows it to expose IPTV style channels to software, which would not normally support it.  This Docker image includes the following packages and features:
+
+<br>
 
 <br>
 
 <ul>
-<li>xTeVe v2.0 (Linux) x86 64 bit</li>
-<li>Guide2go (Linux) x86 64 bit  (Schedules Direct XMLTV grabber)</li>
+<li>xTeVe v2.1 (Linux) x86 64 bit</li>
+<li>Latest Guide2go (Linux) x86 64 bit  (Schedules Direct XMLTV grabber)</li>
 <li>Zap2XML Support  (Perl based zap2it / TVguide.com XMLTV grabber)</li>
 <li>Bash, Perl & crond Support</li>
 <li>VLC & ffmpeg Support</li>
-<li>Sample config's and crons</li>
+<li>Automated XMLTV Guide Lineups & Cron’s</li>
 <li>Runs as  unprivileged user</li>
 </ul>
 
@@ -48,7 +64,9 @@ xTeVe emulates a SiliconDust HDHomeRun OTA tuner, which allows it to expose IPTV
 
 The recommended <b>default</b> container settings are listed in the docker run command listed below:
 
+
 <p><b> docker run -it -d --name=xteve --network=host --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+
 
 <br>
 
@@ -195,6 +213,10 @@ This container is configured with the following default environmental variables,
 <td>Set xTeVe debug level [ 0-3 ] Default: 0=OFF</td>
 </tr>
 <tr>
+<td>-e XTEVE_API=0</td>
+<td>Enable/Disable API [ beta ] Default: 1=ON</td>
+</tr>
+<tr>
 <td>-v</td>
 <td>Set volume mapping [ -v ~xteve:/home/xteve/conf ]</td>
 </tr>
@@ -209,7 +231,7 @@ This container is configured with the following default environmental variables,
 
 <h2 >Linux Shell (Bash)</h2>
 To connect to the xTeVe container to run local commands, use the following docker command to start a bash shell:
-<p><b>docker exec -it xteve /bin/bash</b></p>
+<p><b>docker exec -it < container_name >  /bin/bash</b></p>
 
 You will automatically be logged in as the root user.  Type <b>"su - xteve"</b> to change to the xTeve user.
 
@@ -258,11 +280,11 @@ Synology Docker GUI which is equivalent to 'docker run'.
 
 <h2 id="Guide2go Configuration">Guide2go Configuration</h2>
 
-To use this feature you will need to purchase a <a href="http://www.schedulesdirect.org">Schedules Direct</a> subscription for $25.00/yr. A sample guide2go configuration file has been provided in /home/xteve/guide2go/conf/guide2go.json which can be configured using the following command:
+<p>To use this feature you will need to purchase a <a href="http://www.schedulesdirect.org">Schedules Direct</a> subscription for $25.00/yr. You can configure your guide2go lineup using the following command:</p
 
-<p><b>guide2go -configure $GUIDE2GO_CONF/guide2go.json</b></p>
+<p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --name</b> < lineup_name ></p>
 
-<p>Provide your Schedules Direct username and password when prompted and then configure your lineup and channels using these options:</p>
+<p>When prompted configure your lineup and channels using these options:</p>
 
 <br>
 <br>
@@ -282,38 +304,39 @@ Choose Provider
 
 Choose "ALL" for your selected lineup.  
 
-<p> <b> NOTE: We do NOT recommend adding more than (1) Lineup to the guide2go.json configuration.  If you want to run multiple
+<p> <b> NOTE: We do NOT recommend adding more than (1) Lineup to a single configuration file.  If you want to run multiple
 lineups, follow the directions below for "Additional Guide2go Lineups".</b></p>
 
-<p>Choose "0" to exit and then <b>manually run the command below</b> for the first time to generate the XMLTV file.</p>
+<p>Choose "0" to exit and then follow the prompts to run the initial lineup and automatically add a cron job to automate the guide2go data download..</p>
 
 <br>
 
-<p><b>guide2go -config $GUIDE2GO_CONF/guide2go.json</b></p>
+<br>
 
-<br>
-<br>
 
 <h2 id="Guide2go Crontab">Guide2go Crontab</h2>
 
-Additionally a sample crontab has been created to run the guide2go configuration on a weekly basis. To modify the crontab run <b>'crontab -e -u xteve'</b>
-from a command prompt terminal inside the container.  You will need to add the guide2go XMLTV file located in <b>$XTEVE_CONF/data/guide2go.xml</b>  to  <b>xTeVe->XMLTV</b> once it has been generated on the first run. The sample crontab runs at 1:15 AM on sundays.
-
-<p><b>guide2go -config $GUIDE2GO_CONF/guide2go.json</b></p>
+You can now use the new <b>guide2conf</b> command line utility to automatically create a daily cron job.  Additionally you can manually modify the crontab by running  <b>'crontab -e -u xteve'</b> from a command prompt inside the container.  You will need to add the guide2go XMLTV file located in <b>$XTEVE_CONF/data/guide2go.xml</b>  to  <b>xTeVe->XMLTV</b> once it has been generated on the first run. The automatic cron feature runs at 1:15 AM daily.
 
 <br>
+
+<p><b>Manual crontab configuration:</b></p>
+
+<p><b># Run Schedules Direct crontab daily at 1:15 AM EST</b></p>                                                                                              
+<p><b>15  1  *  *  *   /home/xteve/bin/guide2conf --config /home/xteve/guide2go/conf/< lineup_name >.yaml</b></p>
+
+<br>
+
 <br>
 
 <h2 id="Additional Guide2go Lineups">Additional Guide2go Lineups</h2>
 
 You can have up to (4) separate guide2go lineups with one SD subscription.  If you choose to create additional lineups we recommend you create separate guide2go
-configuration  (JSON) files for each one.  Follow the following steps to create additional lineups and crons.
+configuration  (YAML) files for each one.  Follow the following steps to create additional lineups and crons.
 
 <br>
 
-<p><b>guide2go -configure $GUIDE2GO_CONF/new-provider.json</b></p>
-
-Enter your credentials if prompted.
+<p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --name</b> < lineup_name ></p>
 
 <br>
 <br>
@@ -339,45 +362,59 @@ Choose "0" to exit
 
 <br>
 
-The JSON file will now be written to <b>$GUIDE2GO_CONF/new-provider.json</b>
+The YAML file will now be written to <b>$GUIDE2GO_CONF/< lineup_name >.yaml</b>
 
 <br>
 <br>
 
-<p><b>Run your new lineup to generate the $XTEVE_CONF/data/new-provider.json.xml</b></p>
-guide2go -config $GUIDE2GO_CONF/new-provider.json</b></p>
-
-<br>
-<br>
-
-<p><b>Add a cron for your new lineup by editing the crontab, simply clone the existing cron to run any other lineups you have created.</b></p>
+<p>Optionally automatically create a daily cron by following the prompts, otherwise you can manually add a cron later with the following command:</p>
 
 <p><b>crontab -e -u xteve</b></p>
 
 <br>
 
-<p># Run Schedules Direct crontab every Sunday at 1:15 AM EST</p>                                                                                    
-<p>15  1  *  *  0   /home/xteve/bin/guide2go -config /home/xteve/guide2go/conf/new-provider.json</p>
+<p><b>Manual crontab configuration:</b></p>
+
+<p><b># Run Schedules Direct crontab daily at 1:15 AM EST</b></p>                                                                                              
+<p><b>15  1  *  *  *   /home/xteve/bin/guide2conf --config /home/xteve/guide2go/conf/< lineup_name >.yaml</b></p>
 
 <br>
+
 <br>
 
 <h2 id="zap2XML Crontab">zap2XML Crontab</h2>
 
-In addition a sample crontab has been created to run the zap2XML configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run  <b>'crontab -e -u xteve'</b> from a command prompt terminal 
-inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/zap2xml.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The sample crontab runs at 1:15 AM on sundays.
-
-<p><b>/usr/bin/perl /home/xteve/bin/zap2xml.pl -u username@domain.com -p  ******** -U -c $XTEVE_HOME/cache/zap2xml -o
-$XTEVE_CONF/data/zap2xml.xml</b></p>
+To create an automated lineup and cron to run the zap2XML configuration on a daily basis, you will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account.  You can then create the crontab using either the <b>guide2conf</b> utility or manually create the crontab by running the  <b>'crontab -e -u xteve'</b> command from a command prompt inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/zap2xml.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The automated cron runs at 1:15 AM daily.
 
 <br>
+
+<p><b>guide2conf</b> <b>--username</b> < username@domain.com > <b>--password</b> < password ><b> --name</b> < lineup_name > </p>
+
+<br>
+
+<p><b>Manual crontab configuration:</b></p>
+
+<p><b># Run zap2it crontab daily at 1:15 AM EST </b></p>
+<p><b>15  1  *  *  * /home/xteve/bin/zap2xml.pl  -u username@domain.com -p  ******** -U -c $XTEVE_HOME/cache/zap2xml -o
+$XTEVE_CONF/data/< lineup_name >.xml</b></p>
+
 <br>
 
 <h2 id="zap2XML Crontab">zap2XML TVGuide Crontab</h2>
 
-Support for tvguide.com is also now available in this image.  A sample crontab has been created to run the zap2XML TVGuide configuration on a weekly basis. You will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account. To modify the crontab run  <b>'crontab -e -u xteve'</b> from a command prompt terminal inside the container. You will need to add the zap2XML TVGuide XMLTV file located in <b>$XTEVE_CONF/data/tvguide.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The sample crontab runs at 1:15 AM on sundays.
+To create an automated lineup and cron to run the TVGuide.com configuration on a daily basis, you will need to sign up for a free TVGuide.com account. You can then create the crontab using either the <b>guide2conf</b> utility or manually create the crontab by running the <b>'crontab -e -u xteve'</b> command from a command prompt inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/tvguide.xml</b> to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The automated cron runs at 1:15 AM daily.
 
-<p><b>/usr/bin/perl /home/xteve/bin/zap2xml.pl -z -u username@domain.com -p ******** -U -c $XTEVE_HOME/cache/tvguide -o $XTEVE_CONF/data/tvguide.xml</b></p>
+<br>
 
+<p><b>guide2conf</b> <b>--username</b> < username@domain.com > <b>--password</b> < password ><b> --name</b> < lineup_name > </p>
+
+<br>
+
+<p><b>Manual crontab configuration:</b></p>
+
+<p><b># Run TVGuide crontab daily at 1:15 AM EST</b></p>
+<p><b>15  1  *  *  * /home/xteve/bin/zap2xml.pl -z -u username@domain.com -p ******** -U -c $XTEVE_HOME/cache/tvguide -o $XTEVE_CONF/data/< lineup_name >.xml</b></p>
+
+<br>
 
 Enjoy!
