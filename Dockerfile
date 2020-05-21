@@ -6,7 +6,7 @@ RUN apk add --no-cache ca-certificates
 
 ARG XTEVE_VERSION
 
-LABEL org.label-schema.version="${XTEVE_VERSION}" \
+LABEL org.label-schema.version="1.0.5" \
       org.label-schema.schema-version="1.0" \
 	  MAINTAINER="hostmaster@dnsforge.com" \
       SUPPORT_URL="https://xteve.dnsforge.net" \
