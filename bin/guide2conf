@@ -137,6 +137,7 @@ if ($reader =~ /^[Y]?$/i) {
 	system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_CACHE/guide2go/$GUIDE2GO_CONFIG_NAME.json");
 	&update_xmltv($GUIDE2GO_CONFIG_PATH);
 } elsif ($reader =~ /^[N]$/i) {
+	system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_CACHE/guide2go/$GUIDE2GO_CONFIG_NAME.json");
 	print "\nYou can manually download the guide data with the following command: \"guide2conf -config $GUIDE2GO_CONFIG_PATH\"\n";
 	print "No Guide data was downloaded.\n";
 } elsif ($reader =~ /^[Q]$/i) {
