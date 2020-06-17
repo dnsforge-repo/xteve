@@ -24,6 +24,9 @@ https://discord.gg/eWYquha
 
 <br>
 
+<p><B>From a "root" command prompt:</b></p>
+
+
 <p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --name</b> < lineup_name > </p>
 
 <br>

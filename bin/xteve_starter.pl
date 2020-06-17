@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.5.
+# ; Rev    : v1.0.6
 # ; Date   : 6/25/2019
-# ; Last Modification: 5/18/2020
+# ; Last Modification: 6/16/2020
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -64,7 +64,7 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
 	print "Executing: Checking System Configuration..\n";
 	print "\nExecuting: Info: [ ** Attention GUIDE2GO USERS!!! ** ]\n";
-	print "Executing: Info: [ ** Please regenerate your lineups : - guide2conf --username <username> --password <password> --name <lineup> ** ]\n\n";
+	print "Executing: Info: [ ** Please regenerate your lineups : - guide2conf --username <username> --password <password> --name <lineup_name> ** ]\n\n";
 	&verify_setup();
 	&update_settings();
 
@@ -101,19 +101,25 @@ open CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: 
 	close CRONFILE;
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");
+	system("/bin/chown $XTEVE_USER:$XTEVE_USER $CRONDIR/$XTEVE_USER");
+	system("/bin/chmod g+s $CRONDIR/$XTEVE_USER");
 }
 else {
-	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	print "Executing: Restoring Existing xTeVe crond Configuration...\n";
+	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");
+	system("/bin/chown $XTEVE_USER:$XTEVE_USER $CRONDIR/$XTEVE_USER");
+	system("/bin/chmod g+s $CRONDIR/$XTEVE_USER");
 }
 
 open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
 	print PROFILE "\n# Set custom \$USER Environment\n";
 	print PROFILE "export PATH=$PATH\n";
 	print PROFILE "export TZ=$TZ\n";
+	print PROFILE "export XTEVE_USER=$XTEVE_USER\n";
 	print PROFILE "export XTEVE_API=$XTEVE_API\n";
 	print PROFILE "export XTEVE_BIN=$XTEVE_BIN\n";
+	print PROFILE "export XTEVE_CACHE=$XTEVE_CACHE\n";
 	print PROFILE "export XTEVE_CONF=$XTEVE_CONF\n";
 	print PROFILE "export XTEVE_HOME=$XTEVE_HOME\n";
 	print PROFILE "export XTEVE_VERSION=$XTEVE_VERSION\n";
@@ -204,7 +210,7 @@ print SETTINGS "  \"buffer\": \"-\",\n";
 print SETTINGS "  \"buffer.size.kb\": 1024,\n";
 print SETTINGS "  \"buffer.timeout\": 500,\n";
 print SETTINGS "  \"cache.images\": false,\n";
-print SETTINGS "  \"epgSource\": \"PMS\",\n";
+print SETTINGS "  \"epgSource\": \"XEPG\",\n";
 print SETTINGS "  \"ffmpeg.options\": \"-hide_banner -loglevel error -i [URL] -c copy -f mpegts pipe:1\",\n";
 print SETTINGS "  \"ffmpeg.path\": \"/usr/bin/ffmpeg\",\n";
 print SETTINGS "  \"vlc.options\": \"-I dummy [URL] --sout #std{mux=ts,access=file,dst=-}\",\n";
@@ -228,7 +234,6 @@ print SETTINGS " \"update\": [\n";
 print SETTINGS "    \"0000\"\n";
 print SETTINGS "  ],\n";
 print SETTINGS "  \"user.agent\": \"xTeVe\",\n";
-print SETTINGS "  \"uuid\": \"2020-05-AQFE-R1QOU8\",\n";
 print SETTINGS "  \"version\": \"2.1.0\",\n";
 print SETTINGS "  \"xepg.replace.missing.images\": true,\n";
 print SETTINGS "  \"xteveAutoUpdate\": true\n";
