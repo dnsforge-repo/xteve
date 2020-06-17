@@ -2,7 +2,7 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.6
+# ; Rev    : v1.0.7
 # ; Date   : 6/25/2019
 # ; Last Modification: 6/16/2020
 # ;

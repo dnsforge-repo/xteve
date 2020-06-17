@@ -6,7 +6,7 @@ RUN apk add --no-cache ca-certificates
 
 ARG XTEVE_VERSION
 
-LABEL org.label-schema.version="1.0.6" \
+LABEL org.label-schema.version="1.0.7" \
       org.label-schema.schema-version="1.0" \
 	  MAINTAINER="hostmaster@dnsforge.com" \
       SUPPORT_URL="https://xteve.dnsforge.net" \
@@ -27,7 +27,7 @@ ENV XTEVE_BRANCH=master
 ENV XTEVE_DEBUG=0
 ENV XTEVE_API=1
 ENV XTEVE_URL=https://github.com/xteve-project/xTeVe-Downloads/blob/master/xteve_linux_amd64.tar.gz?raw=true
-ENV XTEVE_VERSION=1.0.6
+ENV XTEVE_VERSION=1.0.7
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 

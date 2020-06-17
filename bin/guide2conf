@@ -4,7 +4,7 @@
 # ; Author : LeeD <hostmaster@dnsforge.com>
 # ; Rev    : v1.0.1
 # ; Date   : 5/9/2020
-# ; Last Modification: 6/16/2020
+# ; Last Modification: 6/17/2020
 # ;
 # ; Desc   : Perl wrapper for dnsforge/xteve Guide2go configuration.
 # ;
@@ -270,7 +270,7 @@ my ( $l_GUIDE2GO_CONFIG ) = @_;
         close CRONFILE;
         close T_CRONFILE;
 		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp -u $XTEVE_USER") if $GUIDE2CONF_UID =~ /root/;
-		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp");
+		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp") if $GUIDE2CONF_UID =~ /xteve/;
 		unlink("$XTEVE_CRONDIR/$XTEVE_USER.tmp");
 }
 
@@ -312,7 +312,7 @@ my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG,$ZAPMODE ) = @_;
         close CRONFILE;
         close T_CRONFILE;
 		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp -u $XTEVE_USER") if $GUIDE2CONF_UID =~ /root/;                                                                                
-		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp");
+		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp") if $GUIDE2CONF_UID =~ /xteve/;
 		unlink("$XTEVE_CRONDIR/$XTEVE_USER.tmp");
 }
 
