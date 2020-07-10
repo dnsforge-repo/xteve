@@ -1,0 +1,32 @@
+#!/bin/bash
+############################################################################
+# ; Program: xteve_starter.pl
+# ; Author : LeeD <hostmaster@dnsforge.com>
+# ; Rev    : v1.0.1
+# ; Date   : 7/10/2019
+# ; Last Modification: 7/10/2020
+# ;
+# ; Desc   : Custom BUILD script for the xTeVe docker container.
+# ;
+# ; Copyright (c) 2019, Dnsforge Internet Inc.
+# ;
+# ; This program is free software: you can redistribute it and/or modify
+# ; it under the terms of the GNU General Public License as published by
+# ; the Free Software Foundation, either version 3 of the License, or
+# ; (at your option) any later version.
+# ;
+# ; This program is distributed in the hope that it will be useful,
+# ; but WITHOUT ANY WARRANTY; without even the implied warranty of
+# ; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# ; GNU General Public License for more details.
+# ;
+# ; You should have received a copy of the GNU General Public License
+# ; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# ;
+############################################################################
+
+echo "Executing: Build hook running..."
+docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+             --build-arg VCS_REF=`git rev-parse --short HEAD` \
+             --build-arg XTEVE_VERSION="1.0.8" \
+             -t $IMAGE_NAME .
