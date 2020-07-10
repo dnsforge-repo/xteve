@@ -57,7 +57,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add VideoLAN & ffmpeg support
 RUN apk add --no-cache vlc ffmpeg
 
-# Install Perl for Zap2it support
+# Install Perl Dependancies
 RUN apk add --no-cache \
 perl-dev \
 build-base \
