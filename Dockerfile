@@ -4,13 +4,21 @@ RUN apk upgrade
 RUN apk add --no-cache ca-certificates
 
 
+ARG BUILD_DATE
+ARG VCS_REF
 ARG XTEVE_VERSION
 
-LABEL org.label-schema.version="1.0.7" \
+LABEL org.label-schema.build-date="{$BUILD_DATE}" \
+      org.label-schema.name="xTeVe Docker Edition" \
+      org.label-schema.description="Latest Dockerized xTeVe v2.1.x IPTV proxy with Guide2go, zap2XML, Crond & Perl Support." \
+      org.label-schema.url="https://xteve.dnsforge.net/" \
+      org.label-schema.vcs-ref="{$VCS_REF}" \
+      org.label-schema.vcs-url="https://github.com/dnsforge-repo/xteve" \
+      org.label-schema.vendor="Dnsforge Internet Inc" \
+      org.label-schema.version="{$XTEVE_VERSION}" \
       org.label-schema.schema-version="1.0" \
-	  MAINTAINER="hostmaster@dnsforge.com" \
-      SUPPORT_URL="https://xteve.dnsforge.net" \
-      DISCORD_URL="https://discord.gg/eWYquha"
+      MAINTAINER="hostmaster@dnsforge.com" \
+      DISCORD_URL="https://discord.gg/Up4ZsV6"
 
 ENV XTEVE_USER=xteve
 ENV XTEVE_UID=31337
@@ -27,7 +35,7 @@ ENV XTEVE_BRANCH=master
 ENV XTEVE_DEBUG=0
 ENV XTEVE_API=1
 ENV XTEVE_URL=https://github.com/xteve-project/xTeVe-Downloads/blob/master/xteve_linux_amd64.tar.gz?raw=true
-ENV XTEVE_VERSION=1.0.7
+ENV XTEVE_VERSION=1.0.8
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
 

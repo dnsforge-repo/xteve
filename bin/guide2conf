@@ -50,7 +50,7 @@ $GUIDE2GO_CONF   = $ENV{'GUIDE2GO_CONF'};
 
 $PATH            = $ENV{'PATH'};
 $TZ              = $ENV{'TZ'};
-$CRONBIN		 = "/usr/bin/crontab";
+$CRONBIN         = "/usr/bin/crontab";
 $CRONDIR         = "/etc/crontabs";
 $XTEVE_CRONDIR   = "$XTEVE_CONF/cron";
 $GUIDE2CONF_UID  = getpwuid($<);

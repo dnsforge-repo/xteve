@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.7
+# ; Rev    : v1.0.8
 # ; Date   : 6/25/2019
-# ; Last Modification: 6/16/2020
+# ; Last Modification: 7/10/2020
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -101,15 +101,11 @@ open CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: 
 	close CRONFILE;
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");
-	system("/bin/chown $XTEVE_USER:$XTEVE_USER $CRONDIR/$XTEVE_USER");
-	system("/bin/chmod g+s $CRONDIR/$XTEVE_USER");
 }
 else {
 	print "Executing: Restoring Existing xTeVe crond Configuration...\n";
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");
-	system("/bin/chown $XTEVE_USER:$XTEVE_USER $CRONDIR/$XTEVE_USER");
-	system("/bin/chmod g+s $CRONDIR/$XTEVE_USER");
 }
 
 open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
@@ -131,7 +127,7 @@ close PROFILE;
 &verify_setup();
 print "Executing: Version: xTeVe Docker Edition $XTEVE_VERSION\n";
 print "Executing: Starting xTeVe and crond services...\n";
-print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/eWYquha\n";
+print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/Up4ZsV6\n";
 print "Executing: Info: xTeVe DEBUG mode [$XTEVE_DEBUG] initilized..\n" if $XTEVE_DEBUG > 0;
 print "[xTeVe]: Log File: $XTEVE_LOG\n";
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_HOME");
