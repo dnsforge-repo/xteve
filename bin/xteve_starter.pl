@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.8
+# ; Rev    : v1.0.9
 # ; Date   : 6/25/2019
-# ; Last Modification: 7/10/2020
+# ; Last Modification: 10/22/2020
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -94,9 +94,9 @@ open CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: 
 	print CRONFILE "# Usage: $XTEVE_BIN/guide2conf -h\n";
 	print CRONFILE "#\n";
 	print CRONFILE "# Guide2go:\n";
-	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username> --password <password> --name <lineup_name>\n";
+	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username> --password <password> --max-days=7 --name <lineup_name>\n";
 	print CRONFILE "# Zap2it & TVGuide:\n";
-	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username\@domain.com> --password <password> --name <lineup_name>\n";
+	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username\@domain.com> --password <password> --max-days=7 --name <lineup_name>\n";
 	print CRONFILE "#\n";
 	close CRONFILE;
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
@@ -129,6 +129,7 @@ print "Executing: Version: xTeVe Docker Edition $XTEVE_VERSION\n";
 print "Executing: Starting xTeVe and crond services...\n";
 print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/Up4ZsV6\n";
 print "Executing: Info: xTeVe DEBUG mode [$XTEVE_DEBUG] initilized..\n" if $XTEVE_DEBUG > 0;
+print "Executing: Info: xTeVe BRANCH mode [$XTEVE_BRANCH] initilized..\n" if $XTEVE_BRANCH =~ /beta/;
 print "[xTeVe]: Log File: $XTEVE_LOG\n";
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_HOME");
 system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_TEMP");

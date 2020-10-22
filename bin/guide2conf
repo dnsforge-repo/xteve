@@ -2,11 +2,11 @@
 ############################################################################
 # ; Program: guide2conf.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.1
+# ; Rev    : v1.0.2
 # ; Date   : 5/9/2020
-# ; Last Modification: 6/17/2020
+# ; Last Modification: 10/22/2020
 # ;
-# ; Desc   : Perl wrapper for dnsforge/xteve Guide2go configuration.
+# ; Desc   : Perl wrapper for dnsforge/xteve Guide2go & zap2it configuration.
 # ;
 # ;	Copyright (c) 2020, Dnsforge Internet Inc.
 # ;
@@ -55,15 +55,14 @@ $CRONDIR         = "/etc/crontabs";
 $XTEVE_CRONDIR   = "$XTEVE_CONF/cron";
 $GUIDE2CONF_UID  = getpwuid($<);
 
-
 GetOptions(
   'username=s' => \my $GUIDE2GO_UID,
   'password=s' => \my $GUIDE2GO_PASSWD,
   'name=s'     => \my $GUIDE2GO_CONFIG_NAME,
   'config=s'   => \my $GUIDE2GO_XMLTV_PATH,
-  'refresh=i'   => \my $XTEVE_XMLTV_REFRESH,
+  'max-days=i' => \my $GUIDE2CONF_MAX_DAYS,
+  'refresh=i'  => \my $XTEVE_XMLTV_REFRESH,
 ) or &help and exit(1);
-
 
 $GUIDE2GO_CONFIG_NAME=~ s/.yaml//;
 $GUIDE2GO_CONFIG_NAME=~ s/.json//;
@@ -71,7 +70,7 @@ $GUIDE2GO_CONFIG_NAME=~ s/.xml//;
 
 
 if (defined $GUIDE2GO_XMLTV_PATH) {
-if (defined $GUIDE2GO_UID || $GUIDE2GO_PASSWD || $GUIDE2GO_CONFIG_NAME) {
+if (defined $GUIDE2GO_UID || $GUIDE2GO_PASSWD || $GUIDE2GO_CONFIG_NAME || $GUIDE2CONF_MAX_DAYS ) {
 	&help and exit(1);
 }
 if (! -e $GUIDE2GO_XMLTV_PATH ) {
@@ -105,6 +104,9 @@ if ((!defined $GUIDE2GO_PASSWD) || ($GUIDE2GO_PASSWD eq '')) {
 if ((!defined $GUIDE2GO_CONFIG_NAME) || ($GUIDE2GO_CONFIG_NAME eq '')) {
 	&help and exit(1);
 }
+if ( $GUIDE2CONF_MAX_DAYS !~ /^(1[0-4]|[1-9])$/) {
+	$GUIDE2CONF_MAX_DAYS = 7;
+}
 if ( $GUIDE2CONF_UID !~ /root/ ) {
 	print "Sorry, guide2conf configure mode must run as the root user!!\n";
 	&help and exit(1);
@@ -121,7 +123,19 @@ $GUIDE2GO_HPASSWD = &create_passwd($GUIDE2GO_PASSWD);
 my $GUIDE2GO_CONFIG_PATH = "$GUIDE2GO_CONF/" . "$GUIDE2GO_CONFIG_NAME" . ".yaml";
 
 if ( -e "$GUIDE2GO_CONFIG_PATH") {
+	print "This lineup already exists, Do you want to replace this lineup?\n";
+	print "Enter Y|N: ";
+	chomp(my $reader = <STDIN>);
+if ($reader =~ /^[Y]?$/i) {
+	unlink("$GUIDE2GO_CONFIG_PATH");
+	unlink("$XTEVE_CONF/data/$GUIDE2GO_CONFIG_NAME.xml");
+	unlink("$XTEVE_CACHE/guide2go/$GUIDE2GO_CONFIG_NAME.json");
+	&create_conf($GUIDE2GO_UID,$GUIDE2GO_HPASSWD,$GUIDE2GO_CONFIG_PATH);
 	system("$XTEVE_BIN/guide2go -configure $GUIDE2GO_CONFIG_PATH");
+}
+elsif ($reader =~ /^[N]$/i) {
+	system("$XTEVE_BIN/guide2go -configure $GUIDE2GO_CONFIG_PATH");
+	}
 }
 else {
 	&create_conf($GUIDE2GO_UID,$GUIDE2GO_HPASSWD,$GUIDE2GO_CONFIG_PATH);
@@ -154,10 +168,19 @@ print "Enter Y|N|Q: ";
 chomp( $reader = <STDIN>);
  
 if ($reader =~ /^[Y]?$/i) {
-        print "Adding Crontab for lineup [ $GUIDE2GO_CONFIG_PATH ] ...\n";
-        &create_cron($GUIDE2GO_CONFIG_PATH);
+	print "What time would you like to Schedule this cron?\n";
+	print "Enter [00:00-23:59]: ";
+	chomp(my $reader = <STDIN>);
+
+if ( $reader !~ /^(\d+):(\d+)/) {
+	$reader = "01:15";
+	print "Invalid time format, setting cron for [$reader] ...\n";
+}
+	($CRON_INT_HOUR,$CRON_INT_MINS) = split /\:/,$reader;
+	print "Adding Crontab for lineup [ $GUIDE2GO_CONFIG_PATH ] ...\n";
+	&create_cron($GUIDE2GO_CONFIG_PATH,$CRON_INT_HOUR,$CRON_INT_MINS);
 } elsif ($reader =~ /^[N]$/i) {
-        print "\nYou can manually add a crontab for this lineup with the command \"crontab -e -u xteve\"\n";
+        print "\nOK, You can manually add a crontab for this lineup with the command \"crontab -e -u xteve\"\n";
         print "No cron was added.\n";
 } elsif ($reader =~ /^[Q]$/i) {
         print "Exiting..\n";
@@ -192,16 +215,23 @@ my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG ) = @_;
 		print G2GCONF "    XMLTV: $XTEVE_CONF/data/$GUIDE2GO_CONFIG_NAME.xml\n";
 		print G2GCONF "Options:\n";
 		print G2GCONF "    Poster Aspect: all\n";
-		print G2GCONF "    Schedule Days: 7\n";
+		print G2GCONF "    Schedule Days: $GUIDE2CONF_MAX_DAYS\n";
 		print G2GCONF "    Subtitle into Description: false\n";
-		print G2GCONF "    Station: []\n";
+		print G2GCONF "    Insert credits tag into XML file: true\n";
+		print G2GCONF "Rating:\n";
+		print G2GCONF "    Insert rating tag into XML file: true\n";
+		print G2GCONF "    Maximum rating entries. 0 for all entries: 1\n";
+		print G2GCONF "    Preferred countries. ISO 3166-1 alpha-3 country code. Leave empty for all systems: []\n";
+		print G2GCONF "    Use country code as rating system: false\n";
+		print G2GCONF "    Show download errors from Schedules Direct in the log: false\n";
+		print G2GCONF "Station: []\n";
 }
 
 sub create_zapconf {
         my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG ) = @_;
 
-		$l_GUIDE2GO_CONFIG_NAME = "$l_GUIDE2GO_CONFIG";
-		$l_GUIDE2GO_CONFIG = "$l_GUIDE2GO_CONFIG" . ".xml";
+	$l_GUIDE2GO_CONFIG_NAME = "$l_GUIDE2GO_CONFIG";
+	$l_GUIDE2GO_CONFIG = "$l_GUIDE2GO_CONFIG" . ".xml";
 
         print "\n\n";
         print "Do you want to download guide data for zap2it or TVGuide?\n";
@@ -212,12 +242,12 @@ sub create_zapconf {
 		$ZAPMODE = 0;
 		mkpath("$XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME");
 		system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_CACHE/zap2xml");
-		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG");
+		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG");
 		} elsif ($reader =~ /^[T]$/i) {
 		$ZAPMODE = 1;
 		mkpath("$XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME");
 		system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_CACHE/tvguide");
-		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG");
+		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG");
         } elsif ($reader =~ /^[Q]$/i) {
                 print "Exiting..\n";
                 exit(1);
@@ -233,8 +263,17 @@ sub create_zapconf {
         chomp( $reader = <STDIN>);
  
         if ($reader =~ /^[Y]?$/i) {
-                print "Adding Crontab for lineup [ $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG ] ...\n";
-                &create_zapcron($l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG_NAME,$ZAPMODE);
+		print "What time would you like to Schedule this cron?\n";
+		print "Enter [00:00-23:59]: ";
+		chomp(my $reader = <STDIN>);
+
+	if ( $reader !~ /^(\d+):(\d+)/) {
+		$reader = "01:15";
+		print "Invalid time format, setting cron for [$reader]\n";
+	}
+		($CRON_INT_HOUR,$CRON_INT_MINS) = split /\:/,$reader;
+		print "Adding Crontab for lineup [ $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG ] ...\n";
+		&create_zapcron($l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG_NAME,$ZAPMODE,$CRON_INT_HOUR,$CRON_INT_MINS);
         } elsif ($reader =~ /^[N]$/i) {
                 print "\nYou can manually add a crontab for this lineup with the command \"crontab -e -u xteve\"\n";
                 print "No cron was added.\n";
@@ -249,7 +288,7 @@ sub create_zapconf {
 }
 
 sub create_cron {
-my ( $l_GUIDE2GO_CONFIG ) = @_;
+my ( $l_GUIDE2GO_CONFIG,$l_CRON_INT_HOUR,$l_CRON_INT_MINS ) = @_;
 
         open CRONFILE, "$CRONDIR/$XTEVE_USER";
         open T_CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER.tmp" or die "Unable to write $XTEVE_CRONDIR/$XTEVE_USER.tmp!: $!";
@@ -262,22 +301,22 @@ my ( $l_GUIDE2GO_CONFIG ) = @_;
 
         if ($reader =~ /$l_GUIDE2GO_CONFIG/) {
                         $GUIDE2CONF_CRON_EXIST = 1;
-                        print T_CRONFILE "15  1  *  *  *   $XTEVE_BIN/guide2conf --config $l_GUIDE2GO_CONFIG\n";
+                        print T_CRONFILE "$l_CRON_INT_MINS  $l_CRON_INT_HOUR  *  *  *   $XTEVE_BIN/guide2conf --config $l_GUIDE2GO_CONFIG\n";
         }
 
 }
-        print T_CRONFILE "# Run Schedules Direct crontab daily at 1:15 AM EST\n15  1  *  *  *   $XTEVE_BIN/guide2conf --config $l_GUIDE2GO_CONFIG\n" if $GUIDE2CONF_CRON_EXIST==0;
+        print T_CRONFILE "# Run Schedules Direct crontab daily at $l_CRON_INT_HOUR:$l_CRON_INT_MINS EST\n$l_CRON_INT_MINS  $l_CRON_INT_HOUR  *  *  *   $XTEVE_BIN/guide2conf --config $l_GUIDE2GO_CONFIG\n" if $GUIDE2CONF_CRON_EXIST==0;
         close CRONFILE;
         close T_CRONFILE;
-		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp -u $XTEVE_USER") if $GUIDE2CONF_UID =~ /root/;
-		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp") if $GUIDE2CONF_UID =~ /xteve/;
-		unlink("$XTEVE_CRONDIR/$XTEVE_USER.tmp");
+	system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp -u $XTEVE_USER") if $GUIDE2CONF_UID =~ /root/;
+	system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp") if $GUIDE2CONF_UID =~ /xteve/;
+	unlink("$XTEVE_CRONDIR/$XTEVE_USER.tmp");
 }
 
 sub create_zapcron {
-my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG,$ZAPMODE ) = @_;
+my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG,$ZAPMODE,$l_CRON_INT_HOUR,$l_CRON_INT_MINS ) = @_;
 
-		$l_GUIDE2GO_CONFIG_NAME = "$l_GUIDE2GO_CONFIG";                                                                                                                               
+	$l_GUIDE2GO_CONFIG_NAME = "$l_GUIDE2GO_CONFIG";
         $l_GUIDE2GO_CONFIG = "$l_GUIDE2GO_CONFIG" . ".xml";
 
         open CRONFILE, "$CRONDIR/$XTEVE_USER";
@@ -292,67 +331,68 @@ my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG,$ZAPMODE ) = @_;
         if ($reader =~ /$l_GUIDE2GO_CONFIG/) {
                         $GUIDE2CONF_CRON_EXIST = 1;
 
-		if ( $ZAPMODE == 0 ) {
-			print T_CRONFILE "15  1  *  *  * $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n";
-		}
-		elsif ($ZAPMODE ==1 ) {
-			print T_CRONFILE "15  1  *  *  * $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n";
-		}
-    }
+	if ( $ZAPMODE == 0 ) {
+		print T_CRONFILE "$l_CRON_INT_MINS  $l_CRON_INT_HOUR  *  *  * $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n";
+	}
+	elsif ($ZAPMODE ==1 ) {
+		print T_CRONFILE "$l_CRON_INT_MINS  $l_CRON_INT_HOUR  *  *  * $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n";
+	}
+     }
 
 }
 
         if ( $ZAPMODE == 0 ) {
-			print T_CRONFILE "# Run zap2it crontab daily at 1:15 AM EST\n15  1  *  *  * $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n" if $GUIDE2CONF_CRON_EXIST==0;
+			print T_CRONFILE "# Run zap2it crontab daily at $l_CRON_INT_HOUR:$l_CRON_INT_MINS EST\n$l_CRON_INT_MINS  $l_CRON_INT_HOUR  *  *  * $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n" if $GUIDE2CONF_CRON_EXIST==0;
         }
         elsif ($ZAPMODE ==1 ) {
-			print T_CRONFILE "# Run TVGuide crontab daily at 1:15 AM EST\n15  1  *  *  * $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n" if $GUIDE2CONF_CRON_EXIST==0;
+			print T_CRONFILE "# Run TVGuide crontab daily at $l_CRON_INT_HOUR:$l_CRON_INT_MINS EST\n$l_CRON_INT_MINS   $l_CRON_INT_HOUR  *  *  * $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG\n" if $GUIDE2CONF_CRON_EXIST==0;
         }
 
         close CRONFILE;
         close T_CRONFILE;
-		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp -u $XTEVE_USER") if $GUIDE2CONF_UID =~ /root/;                                                                                
-		system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp") if $GUIDE2CONF_UID =~ /xteve/;
-		unlink("$XTEVE_CRONDIR/$XTEVE_USER.tmp");
+	system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp -u $XTEVE_USER") if $GUIDE2CONF_UID =~ /root/;
+	system("$CRONBIN $XTEVE_CRONDIR/$XTEVE_USER.tmp") if $GUIDE2CONF_UID =~ /xteve/;
+	unlink("$XTEVE_CRONDIR/$XTEVE_USER.tmp");
 }
 
 sub update_xmltv {
 my ( $l_GUIDE2GO_CONFIG_PATH ) = @_;
-		if ( $GUIDE2CONF_UID =~ /root/ ) {
-			system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
-			system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $l_GUIDE2GO_CONFIG_PATH");
-		} else {
-			system("$XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
-		}
+	if ( $GUIDE2CONF_UID =~ /root/ ) {
+		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
+		system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $l_GUIDE2GO_CONFIG_PATH");
+	} else {
+	system("$XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
+	}
 }
 
 sub refresh_xmltv {
 if ( $XTEVE_API ==1 ) {
-		print "\nExecuting: Update xTeVe XMLTV and XEPG data...\n";
-		system("/usr/bin/curl -X POST -H \"Content-Type: application/json\" -d \'{\"cmd\":\"update.xmltv\"}\' http://localhost:$XTEVE_PORT/api/");
-		system("/usr/bin/curl -X POST -H \"Content-Type: application/json\" -d \'{\"cmd\":\"update.xepg\"}\' http://localhost:$XTEVE_PORT/api/");
-		exit(1);
-		}
+	print "\nExecuting: Update xTeVe XMLTV and XEPG data...\n";
+	system("/usr/bin/curl -X POST -H \"Content-Type: application/json\" -d \'{\"cmd\":\"update.xmltv\"}\' http://localhost:$XTEVE_PORT/api/");
+	system("/usr/bin/curl -X POST -H \"Content-Type: application/json\" -d \'{\"cmd\":\"update.xepg\"}\' http://localhost:$XTEVE_PORT/api/");
+	exit(1);
+	}
 }
 
 sub help() {
-		print "$0: XMLTV wrapper for Schedules Direct & zap2it.\n";
+	print "$0: XMLTV wrapper for Schedules Direct & zap2it.\n";
 
-		print "\n\t\tVersion: $XTEVE_VERSION\n\n";
+	print "\n\t\tVersion: Guide2conf $XTEVE_VERSION\n\n";
 
-		print "\t\t$0 --username\t\t\t[ Provider username ]\n";
-		print "\t\t$0 --password\t\t\t[ Provider password ]\n";
-		print "\t\t$0 --name\t\t\t[ ie; guide2go, USA-DIRECTV7, UK-SKY7 .. ]\n";
+	print "\t\t$0 --username\t\t\t[ Provider username ]\n";
+	print "\t\t$0 --password\t\t\t[ Provider password ]\n";
+	print "\t\t$0 --name\t\t\t[ ie; USA-DIRECTV7, USA-ZAP7, USA-TVG7 .. ]\n";
+	print "\t\t$0 --max-days\t\t\t[ Max days of guide data to download [1-14] ]\n";
 
-		print "\t\t$0 --config\t\t\t[ Update XMLTV file ]\n";
-		print "\t\t$0 --config --refresh=1\t\t[ Refresh xTeVe XMLTV & XEPG ]\n";
-		print "\n";
-		print "\t\tUsage:\n";
-		print "\t\t$0 --username <username> --password <password> --name USA-DIRECTV7\n";
-		print "\t\t$0 --username <username\@domain.com> --password <password> --name USA-ZAP7\n";
-		print "\t\t$0 --username <username\@domain.com> --password <password> --name USA-TVGUIDE7\n";
-		print "\n";
-		print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml\n";
-		print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml --refresh=1\n";
-		print " -h This help screen\n";
+	print "\t\t$0 --config\t\t\t[ Update XMLTV file ]\n";
+	print "\t\t$0 --config --refresh=1\t\t[ Refresh xTeVe XMLTV & XEPG ]\n";
+	print "\n";
+	print "\t\tUsage:\n";
+	print "\t\t$0 --username <username> --password <password> --max-days=7 --name USA-DIRECTV7\n";
+	print "\t\t$0 --username <username\@domain.com> --password <password> --max-days=7 --name USA-ZAP7\n";
+	print "\t\t$0 --username <username\@domain.com> --password <password> --max-days=7 --name USA-TVG7\n";
+	print "\n";
+	print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml\n";
+	print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml --refresh=1\n";
+	print " -h This help screen\n";
 }

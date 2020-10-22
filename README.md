@@ -1,5 +1,6 @@
 <a href="https://microbadger.com/images/dnsforge/xteve" title="Get your own image badge on microbadger.com"><img src="https://images.microbadger.com/badges/image/dnsforge/xteve.svg"></a>
 <a href="https://microbadger.com/images/dnsforge/xteve" title="Get your own version badge on microbadger.com"><img src="https://images.microbadger.com/badges/version/dnsforge/xteve.svg"></a>
+<a href="https://microbadger.com/images/dnsforge/xteve" title="Get your own commit badge on microbadger.com"><img src="https://images.microbadger.com/badges/commit/dnsforge/xteve.svg"></a>
 
 <br>
 
@@ -8,12 +9,14 @@
 <h1 id="xTeVe><a href="https://xteve.de/">xTeVe Docker Edition</a></h1>
 <a href="https://xteve.de"><p><b>Recommended by xteve.de</b></p></a>
 <tr>
-<br>
 
 Image Maintainer:  <b>LeeD </b>\<hostmaster@dnsforge.com\></a>
 
-For support come visit us at our xTeVe Discord channel:
-https://discord.gg/eWYquha
+<br>
+
+For support click <b>below</b> to visit our xTeVe <b>Discord</b> server:
+
+<a href="https://discord.gg/Up4ZsV6"><img alt="Discord" src="https://img.shields.io/discord/465222357754314767?color=%2367E3FB&style=for-the-badge">
 
 <br>
 
@@ -31,9 +34,7 @@ https://discord.gg/eWYquha
 
 <br>
 
-<p><b> This tool will run your lineup and give you the option of automatically adding a cron job for automated daily downloads. Automated cron's run at 1:15 AM daily.</b></p>
-
-<p><b>You can modify the cron run time with 'crontab -e -u xteve' from the container's command line.</b></p>
+<p><b> This tool will run your lineup and give you the option of automatically adding a cron job for automated daily downloads.</b></p>
 
 <br>
 
@@ -68,7 +69,7 @@ xTeVe is a M3U proxy server for Plex, Emby and any client and provider which sup
 The recommended <b>default</b> container settings are listed in the docker run command listed below:
 
 
-<p><b> docker run -it -d --name=xteve --network=host --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -v $PATH/xteve:/home/xteve/conf dnsforge/xteve:latest</b></p>
 
 
 <br>
@@ -82,15 +83,17 @@ The recommended <b>default</b> container settings are listed in the docker run c
 
 In bridge mode the docker container will assign it's own dockernet ip address (usually in the 172.17.x network).</p>
 
-<p><b>docker run -it -d --name=xteve -p 34400:34400 --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+<p><b>docker run -it -d --name=xteve -p 34400:34400 --restart=always -v $PATH/xteve:/home/xteve/conf dnsforge/xteve:latest</b></p>
 
 <br>
 
 <br>
 
-If you plan to use guide2go simply, include the GUIDE2GO_CONF Volume to be able to access your files directly from the host.  Existing users can also copy their existing <b>.json</b> configuration files in to this location.
+<h2 >Docker 'run' Configuration with Guide2go</h2>
 
-<p><b>docker run -it -d --name=xteve --network=host --restart=always -v $LOCAL_DIR/xteve:/home/xteve/conf -v $LOCAL_DIR/xteve_tmp:/tmp/xteve -v $LOCAL_DIR/guide2go_conf:/home/xteve/guide2go/conf dnsforge/xteve:latest</b></p>
+If you plan to use guide2go simply, include the GUIDE2GO Volume to be able to access your files directly from the host.  Existing users can also copy their existing <b>.yaml</b> configuration files in to this location.
+
+<p><b>docker run -it -d --name=xteve --network=host --restart=always -v $PATH/xteve:/home/xteve/conf -v $PATH/guide2go:/home/xteve/guide2go/conf dnsforge/xteve:latest</b></p>
 
 <br>
 
@@ -106,12 +109,10 @@ You can  customize the container installation by passing options with <b> 'docke
 
 Custom Locale (Timezone):
 
-<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -v $LOCAL_DIR/xteve:/home/xteve/conf -v
-$LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -v $PATH/xteve:/home/xteve/conf dnsforge/xteve:latest</b></p>
 
 Custom Port and Locale:
-<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -e XTEVE_PORT=8080 -v $LOCAL_DIR/xteve:/home/xteve/conf -v
-$LOCAL_DIR/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b></p>
+<p><b> docker run -it -d --name=xteve --network=host --restart=always -e TZ=Europe/London -e XTEVE_PORT=8080 -v $PATH/xteve:/home/xteve/conf dnsforge/xteve:latest</b></p>
 
 <br>
 
@@ -245,17 +246,19 @@ You will automatically be logged in as the root user.  Type <b>"su - xteve"</b> 
 
 Run the container with the 'docker run' command with any desired parameters from the table above.
 
-<p><b>mkdir -p ~/xteve</b>
+<p><b>mkdir -p $PATH/xteve</b>
 
-<p><b>mkdir -p ~/xteve_tmp</b>
-
-<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b>
+<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v $PATH/xteve:/home/xteve/conf dnsforge/xteve:latest</b>
 
 <br>
 <br>
 
 <p>Linux with Guide2go:</p>
-<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v ~/xteve:/home/xteve/conf -v ~/xteve_tmp:/tmp/xteve -v ~/guide2go_conf:/home/xteve/guide2go/conf dnsforge/xteve:latest</b>
+
+<p><b>mkdir -p $PATH/xteve</b>
+<p><b>mkdir -p $PATH/guide2go</b>
+
+<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v $PATH/xteve:/home/xteve/conf -v $PATH/guide2go:/home/xteve/guide2go/conf dnsforge/xteve:latest</b>
 
 <br>
 <br>
@@ -267,16 +270,17 @@ Synology Docker GUI which is equivalent to 'docker run'.
 
 <p><b>mkdir /volume1/docker/xteve</b>
 
-<p><b>mkdir /volume1/docker/xteve_tmp</b>
-
-<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve dnsforge/xteve:latest</b>
+<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v /volume1/docker/xteve:/home/xteve/conf dnsforge/xteve:latest</b>
 
 <br>
 <br>
 
 <p>Synology with Guide2go:</p>
 
-<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v /volume1/docker/xteve:/home/xteve/conf -v /volume1/docker/xteve_tmp:/tmp/xteve -v /volume1/docker/guide2go_conf:/home/xteve/guide2go/conf dnsforge/xteve:latest</b>
+<p><b>mkdir /volume1/docker/xteve</b>
+<p><b>mkdir /volume1/docker/guide2go</b>
+
+<p><b>docker run -it -d --name=xteve --network=host --restart=always  -v /volume1/docker/xteve:/home/xteve/conf  -v /volume1/docker/guide2go:/home/xteve/guide2go/conf dnsforge/xteve:latest</b>
 
 <br>
 <br>
@@ -285,7 +289,7 @@ Synology Docker GUI which is equivalent to 'docker run'.
 
 <p>To use this feature you will need to purchase a <a href="http://www.schedulesdirect.org">Schedules Direct</a> subscription for $25.00/yr. You can configure your guide2go lineup using the following command:</p
 
-<p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --name</b> < lineup_name ></p>
+<p><b>guide2conf</b> <b>--username</b> < username > <b> --password</b> < password ><b> --max-days</b> < max_days [1-14] > <b>--name</b> < lineup_name ></p>
 
 <p>When prompted configure your lineup and channels using these options:</p>
 
@@ -319,7 +323,7 @@ lineups, follow the directions below for "Additional Guide2go Lineups".</b></p>
 
 <h2 id="Guide2go Crontab">Guide2go Crontab</h2>
 
-You can now use the new <b>guide2conf</b> command line utility to automatically create a daily cron job.  Additionally you can manually modify the crontab by running  <b>'crontab -e -u xteve'</b> from a command prompt inside the container.  You will need to add the guide2go XMLTV file located in <b>$XTEVE_CONF/data/guide2go.xml</b>  to  <b>xTeVe->XMLTV</b> once it has been generated on the first run. The automatic cron feature runs at 1:15 AM daily.
+You can now use the new <b>guide2conf</b> command line utility to automatically create a daily cron job.  Alternatively you can manually modify the crontab by running  <b>'crontab -e -u xteve'</b> from a command prompt inside the container.  You will need to add the guide2go XMLTV file located in <b>$XTEVE_CONF/data/guide2go.xml</b>  to  <b>xTeVe->XMLTV</b> in the xTeVe UI once it has been generated on the first run.
 
 <br>
 
@@ -339,7 +343,7 @@ configuration  (YAML) files for each one.  Follow the following steps to create 
 
 <br>
 
-<p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --name</b> < lineup_name ></p>
+<p><b>guide2conf</b> <b>--username</b> < username > <b>--password</b> < password ><b> --max-days</b> < max_days [1-14] > <b>--name</b> < lineup_name ></p>
 
 <br>
 <br>
@@ -387,36 +391,36 @@ The YAML file will now be written to <b>$GUIDE2GO_CONF/< lineup_name >.yaml</b>
 
 <h2 id="zap2XML Crontab">zap2XML Crontab</h2>
 
-To create an automated lineup and cron to run the zap2XML configuration on a daily basis, you will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account.  You can then create the crontab using either the <b>guide2conf</b> utility or manually create the crontab by running the  <b>'crontab -e -u xteve'</b> command from a command prompt inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/zap2xml.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The automated cron runs at 1:15 AM daily.
+To create an automated lineup and cron to run the zap2XML configuration on a daily basis, you will need to sign up for a free <a href="https://tvlistings.zap2it.com">Zap2it</a> account.  You can then create the crontab using either the <b>guide2conf</b> utility or manually create the crontab by running the  <b>'crontab -e -u xteve'</b> command from a command prompt inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/zap2xml.xml</b>  to <b>xTeVe->XMLTV</b> once it has been generated on the first run.
 
 <br>
 
-<p><b>guide2conf</b> <b>--username</b> < username@domain.com > <b>--password</b> < password ><b> --name</b> < lineup_name > </p>
+<p><b>guide2conf</b> <b>--username</b> < username@domain.com > <b>--password</b> < password ><b> --max-days</b> < max_days[1-14] ><b> --name</b> < lineup_name > </p>
 
 <br>
 
 <p><b>Manual crontab configuration:</b></p>
 
 <p><b># Run zap2it crontab daily at 1:15 AM EST </b></p>
-<p><b>15  1  *  *  * /home/xteve/bin/zap2xml.pl  -u username@domain.com -p  ******** -U -c $XTEVE_HOME/cache/zap2xml -o
+<p><b>15  1  *  *  * /home/xteve/bin/zap2xml.pl  -u username@domain.com -p  ******** -U -c $XTEVE_CACHE/zap2xml/< lineup_name> -o
 $XTEVE_CONF/data/< lineup_name >.xml</b></p>
 
 <br>
 
 <h2 id="zap2XML Crontab">zap2XML TVGuide Crontab</h2>
 
-To create an automated lineup and cron to run the TVGuide.com configuration on a daily basis, you will need to sign up for a free TVGuide.com account. You can then create the crontab using either the <b>guide2conf</b> utility or manually create the crontab by running the <b>'crontab -e -u xteve'</b> command from a command prompt inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/tvguide.xml</b> to <b>xTeVe->XMLTV</b> once it has been generated on the first run. The automated cron runs at 1:15 AM daily.
+To create an automated lineup and cron to run the TVGuide.com configuration on a daily basis, you will need to sign up for a free TVGuide.com account. You can then create the crontab using either the <b>guide2conf</b> utility or manually create the crontab by running the <b>'crontab -e -u xteve'</b> command from a command prompt inside the container. You will need to add the zap2XML XMLTV file located in <b>$XTEVE_CONF/data/tvguide.xml</b> to <b>xTeVe->XMLTV</b> once it has been generated on the first run.
 
 <br>
 
-<p><b>guide2conf</b> <b>--username</b> < username@domain.com > <b>--password</b> < password ><b> --name</b> < lineup_name > </p>
+<p><b>guide2conf</b> <b>--username</b> < username@domain.com > <b>--password</b> < password ><b> --max-days</b> < max_days [1-14] > <b>--name</b> < lineup_name > </p>
 
 <br>
 
 <p><b>Manual crontab configuration:</b></p>
 
 <p><b># Run TVGuide crontab daily at 1:15 AM EST</b></p>
-<p><b>15  1  *  *  * /home/xteve/bin/zap2xml.pl -z -u username@domain.com -p ******** -U -c $XTEVE_HOME/cache/tvguide -o $XTEVE_CONF/data/< lineup_name >.xml</b></p>
+<p><b>15  1  *  *  * /home/xteve/bin/zap2xml.pl -z -u username@domain.com -p ******** -U -c $XTEVE_CACHE/tvguide/< lineup_name > -o $XTEVE_CONF/data/< lineup_name >.xml</b></p>
 
 <br>
 
