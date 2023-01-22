@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.9
+# ; Rev    : v1.1.0
 # ; Date   : 6/25/2019
-# ; Last Modification: 10/22/2020
+# ; Last Modification: 1/21/2023
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -49,6 +49,7 @@ $TZ              = $ENV{'TZ'};
 $PROFILE         = "/etc/profile";
 $CRONDIR         = "/etc/crontabs";
 $XTEVE_CRONDIR   = "$XTEVE_CONF/cron";
+$XTEVE_SCRIPTS   = "$XTEVE_CONF/scripts";
 
 if ( !-e "$XTEVE_HOME/.xteve.run") {
 	print "Executing: Installation of Perl Modules...\n";
@@ -63,8 +64,9 @@ if ( !-e "$XTEVE_HOME/.xteve.run") {
 	system("/bin/chmod -R g+s $XTEVE_TEMP");
 	system("/bin/touch $XTEVE_HOME/.xteve.run");
 	print "Executing: Checking System Configuration..\n";
-	print "\nExecuting: Info: [ ** Attention GUIDE2GO USERS!!! ** ]\n";
-	print "Executing: Info: [ ** Please regenerate your lineups : - guide2conf --username <username> --password <password> --name <lineup_name> ** ]\n\n";
+	print "\n";
+	print "Executing: Info: [ To access a local docker shell type : docker exec -it < container_name > /bin/bash on the host system.\n\n";
+	print "Executing: Info: [ To configure your SD lineups : - guide2conf --username <username> --password <password> --name <lineup_name> ** ]\n\n";
 	&verify_setup();
 	&update_settings();
 
@@ -74,6 +76,17 @@ if ( !-e "$XTEVE_CRONDIR" ) {
 else {
 	chmod 0755, $XTEVE_CRONDIR;
 }
+
+
+if ( !-e "$XTEVE_SCRIPTS" ) {
+    mkdir $XTEVE_SCRIPTS, 0755;
+	move("$XTEVE_BIN/m3uFilter.sh","$XTEVE_SCRIPTS/m3uFilter.sh");
+}
+else {
+    chmod 0755, $XTEVE_SCRIPTS;
+	move("$XTEVE_BIN/m3uFilter.sh","$XTEVE_SCRIPTS/m3uFilter.sh");
+}
+
 
 open CRONFILE, ">>$CRONDIR/root" or die "Unable to open $CRONFILE: $!";
 	print CRONFILE "# Run xTeVe cron sync every 59 minutes\n*/59  *  *  *  *  /bin/cp $CRONDIR/$XTEVE_USER -Rf $XTEVE_CRONDIR/$XTEVE_USER\n";
@@ -98,6 +111,8 @@ open CRONFILE, ">>$XTEVE_CRONDIR/$XTEVE_USER" or die "Unable to open $CRONFILE: 
 	print CRONFILE "# Zap2it & TVGuide:\n";
 	print CRONFILE "# $XTEVE_BIN/guide2conf --username <username\@domain.com> --password <password> --max-days=7 --name <lineup_name>\n";
 	print CRONFILE "#\n";
+	print CRONFILE "# Run the m3uFilter script daily at 12:00 AM\n";
+	print CRONFILE "00  00  *  *  *   /bin/bash /home/xteve/conf/scripts/m3uFilter.sh\n";
 	close CRONFILE;
 	chmod 0600, "$XTEVE_CRONDIR/$XTEVE_USER";
 	copy ("$XTEVE_CRONDIR/$XTEVE_USER","$CRONDIR/$XTEVE_USER");
@@ -127,6 +142,7 @@ close PROFILE;
 &verify_setup();
 print "Executing: Version: xTeVe Docker Edition $XTEVE_VERSION\n";
 print "Executing: Starting xTeVe and crond services...\n";
+print "Executing: Info: For docker documentation visit https://hub.docker.com/r/dnsforge/xteve\n";
 print "Executing: Info: For support come see us in our Discord channel: https://discord.gg/Up4ZsV6\n";
 print "Executing: Info: xTeVe DEBUG mode [$XTEVE_DEBUG] initilized..\n" if $XTEVE_DEBUG > 0;
 print "Executing: Info: xTeVe BRANCH mode [$XTEVE_BRANCH] initilized..\n" if $XTEVE_BRANCH =~ /beta/;

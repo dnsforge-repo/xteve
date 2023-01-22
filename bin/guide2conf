@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: guide2conf.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.2
+# ; Rev    : v1.0.3
 # ; Date   : 5/9/2020
-# ; Last Modification: 10/22/2020
+# ; Last Modification: 10/4/2022
 # ;
 # ; Desc   : Perl wrapper for dnsforge/xteve Guide2go & zap2it configuration.
 # ;
@@ -68,7 +68,6 @@ $GUIDE2GO_CONFIG_NAME=~ s/.yaml//;
 $GUIDE2GO_CONFIG_NAME=~ s/.json//;
 $GUIDE2GO_CONFIG_NAME=~ s/.xml//;
 
-
 if (defined $GUIDE2GO_XMLTV_PATH) {
 if (defined $GUIDE2GO_UID || $GUIDE2GO_PASSWD || $GUIDE2GO_CONFIG_NAME || $GUIDE2CONF_MAX_DAYS ) {
 	&help and exit(1);
@@ -101,7 +100,7 @@ if ((!defined $GUIDE2GO_UID) || ($GUIDE2GO_UID eq '')) {
 if ((!defined $GUIDE2GO_PASSWD) || ($GUIDE2GO_PASSWD eq '')) {
 	&help and exit(1);
 }
-if ((!defined $GUIDE2GO_CONFIG_NAME) || ($GUIDE2GO_CONFIG_NAME eq '')) {
+if ((!defined $GUIDE2GO_CONFIG_NAME) || ($GUIDE2GO_CONFIG_NAME eq '' || ($GUIDE2GO_CONFIG_NAME eq 'xteve'))) {
 	&help and exit(1);
 }
 if ( $GUIDE2CONF_MAX_DAYS !~ /^(1[0-4]|[1-9])$/) {
@@ -245,9 +244,8 @@ sub create_zapconf {
 		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/zap2xml.pl -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/zap2xml/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG");
 		} elsif ($reader =~ /^[T]$/i) {
 		$ZAPMODE = 1;
-		mkpath("$XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME");
-		system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $XTEVE_CACHE/tvguide");
-		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/zap2xml.pl -z -u $l_STR_USERNAME -p $l_STR_PASSWD -U -c $XTEVE_CACHE/tvguide/$l_GUIDE2GO_CONFIG_NAME -d $GUIDE2CONF_MAX_DAYS -o $XTEVE_CONF/data/$l_GUIDE2GO_CONFIG");
+		print "Sorry, The tvguide service is no longer available. Please use zap2it option.\n";
+                exit(1);
         } elsif ($reader =~ /^[Q]$/i) {
                 print "Exiting..\n";
                 exit(1);
@@ -390,7 +388,6 @@ sub help() {
 	print "\t\tUsage:\n";
 	print "\t\t$0 --username <username> --password <password> --max-days=7 --name USA-DIRECTV7\n";
 	print "\t\t$0 --username <username\@domain.com> --password <password> --max-days=7 --name USA-ZAP7\n";
-	print "\t\t$0 --username <username\@domain.com> --password <password> --max-days=7 --name USA-TVG7\n";
 	print "\n";
 	print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml\n";
 	print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml --refresh=1\n";
