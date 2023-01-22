@@ -4,7 +4,7 @@
 # ; Author : LeeD <hostmaster@dnsforge.com>
 # ; Rev    : v1.0.3
 # ; Date   : 5/9/2020
-# ; Last Modification: 10/4/2022
+# ; Last Modification: 1/21/2023
 # ;
 # ; Desc   : Perl wrapper for dnsforge/xteve Guide2go & zap2it configuration.
 # ;
@@ -217,6 +217,10 @@ my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG ) = @_;
 		print G2GCONF "    Schedule Days: $GUIDE2CONF_MAX_DAYS\n";
 		print G2GCONF "    Subtitle into Description: false\n";
 		print G2GCONF "    Insert credits tag into XML file: true\n";
+		print G2GCONF "    Local Images Cache: false\n";
+		print G2GCONF "    Images Path: $XTEVE_CONF/data/images/\n";
+		print G2GCONF "    Proxy Images: false\n";
+		print G2GCONF "    Hostname: localhost:8080\n";
 		print G2GCONF "Rating:\n";
 		print G2GCONF "    Insert rating tag into XML file: true\n";
 		print G2GCONF "    Maximum rating entries. 0 for all entries: 1\n";
@@ -379,7 +383,7 @@ sub help() {
 
 	print "\t\t$0 --username\t\t\t[ Provider username ]\n";
 	print "\t\t$0 --password\t\t\t[ Provider password ]\n";
-	print "\t\t$0 --name\t\t\t[ ie; USA-DIRECTV7, USA-ZAP7, USA-TVG7 .. ]\n";
+	print "\t\t$0 --name\t\t\t[ ie; USA-DIRECTV7, USA-ZAP7 .. ]\n";
 	print "\t\t$0 --max-days\t\t\t[ Max days of guide data to download [1-14] ]\n";
 
 	print "\t\t$0 --config\t\t\t[ Update XMLTV file ]\n";
