@@ -28,5 +28,5 @@
 echo "Executing: Build hook running..."
 docker build --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
              --build-arg VCS_REF=`git rev-parse --short HEAD` \
-             --build-arg XTEVE_VERSION="1.1.0" \
+             --build-arg XTEVE_VERSION="v1.1.1" \
              -t $IMAGE_NAME .
