@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: xteve_starter.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.1.0
+# ; Rev    : v1.1.1
 # ; Date   : 6/25/2019
-# ; Last Modification: 1/21/2023
+# ; Last Modification: 1/31/2023
 # ;
 # ; Desc   : ENTRYPOINT & init script for the xTeVe docker container.
 # ;
@@ -41,8 +41,12 @@ $XTEVE_BRANCH    = $ENV{'XTEVE_BRANCH'};
 $XTEVE_DEBUG     = $ENV{'XTEVE_DEBUG'};
 $XTEVE_API       = $ENV{'XTEVE_API'};
 $XTEVE_VERSION   = $ENV{'XTEVE_VERSION'};
-$GUIDE2GO_HOME   = $ENV{'GUIDE2GO_HOME'};
-$GUIDE2GO_CONF   = $ENV{'GUIDE2GO_CONF'};
+
+$GUIDE2GO_SERVER_HOST = $ENV{'GUIDE2GO_SERVER_HOST'};
+$GUIDE2GO_SERVER_PORT = $ENV{'GUIDE2GO_SERVER_PORT'};
+$GUIDE2GO_HOME        = $ENV{'GUIDE2GO_HOME'};
+$GUIDE2GO_CONF        = $ENV{'GUIDE2GO_CONF'};
+$GUIDE2GO_LOG		  = $ENV{'GUIDE2GO_LOG'};
 
 $PATH            = $ENV{'PATH'};
 $TZ              = $ENV{'TZ'};
@@ -134,8 +138,11 @@ open PROFILE, ">>$PROFILE" or die "Unable to open $PROFILE: $!";
 	print PROFILE "export XTEVE_CONF=$XTEVE_CONF\n";
 	print PROFILE "export XTEVE_HOME=$XTEVE_HOME\n";
 	print PROFILE "export XTEVE_VERSION=$XTEVE_VERSION\n";
+	print PROFILE "export GUIDE2GO_SERVER_HOST=$GUIDE2GO_SERVER_HOST\n";
+	print PROFILE "export GUIDE2GO_SERVER_PORT=$GUIDE2GO_SERVER_PORT\n";
 	print PROFILE "export GUIDE2GO_HOME=$GUIDE2GO_HOME\n";
 	print PROFILE "export GUIDE2GO_CONF=$GUIDE2GO_CONF\n";
+	print PROFILE "export GUIDE2GO_LOG=$GUIDE2GO_LOG\n";
 close PROFILE;
 }
 &check_api();

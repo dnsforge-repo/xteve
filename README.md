@@ -201,6 +201,14 @@ This container is configured with the following default environmental variables,
 <tr>
 <td>dnsforge/xteve:latest</td>
 <td>Latest Docker image</td>
+<tr>
+<td>-e GUIDE2GO_SERVER_HOST=10.0.0.1</td>
+<td>Guide2go Token server [ host | ip ] </td>
+</tr>
+<tr>
+<td>-e GUIDE2GO_SERVER_PORT=31337</td>
+<td>Guide2go Token port [ port ] </td>
+</tr>
 </tbody>
 </table>
 

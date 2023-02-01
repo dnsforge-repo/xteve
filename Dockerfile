@@ -34,9 +34,12 @@ ENV XTEVE_BRANCH=master
 ENV XTEVE_DEBUG=0
 ENV XTEVE_API=1
 ENV XTEVE_URL=https://github.com/xteve-project/xTeVe-Downloads/blob/master/xteve_linux_amd64.tar.gz?raw=true
-ENV XTEVE_VERSION=1.1.0
+ENV XTEVE_VERSION=1.1.1
 ENV GUIDE2GO_HOME=/home/xteve/guide2go
 ENV GUIDE2GO_CONF=/home/xteve/guide2go/conf
+ENV GUIDE2GO_LOG=/home/xteve/guide2go/guide2go.log
+ENV GUIDE2GO_SERVER_HOST=localhost
+ENV GUIDE2GO_SERVER_PORT=31337
 
 ENV PERL_MM_USE_DEFAULT=1
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$XTEVE_BIN

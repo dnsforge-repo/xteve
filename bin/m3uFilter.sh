@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: m3uFilter.sh
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.1.0
+# ; Rev    : v1.1.1
 # ; Date   : 9/11/2022
-# ; Last Modification: 1/21/2023
+# ; Last Modification: 1/30/2023
 # ; 
 # ; Desc   : Build's a customized M3U playlist including only categories
 # ;	     specififed in $M3U_GROUP_NAMES.
@@ -31,7 +31,7 @@ XTEVE_USER="$XTEVE_USER"											# System UID for crontab
 M3U_URL='http://proxy.provider.tld/get.php?username=username&password=password&type=m3u_plus&output=ts'		# Streaming server Playlist M3U URL
 M3U_USER_AGENT='TiviMate/4.3.0 (Linux; Android 7.1.2)'                                                          # Custom user agent for connecting to streaming server
 M3U_FILE='/home/xteve/conf/data/playlist.m3u'									# Local file name for M3U Playlist
-M3U_OUTPUT_FILE='/home/xteve/conf/data/playlist.m3u.tmp'							# Local temp file name for filtered M3U Playlist 
+M3U_OUTPUT_FILE='/home/xteve/conf/data/playlist.m3u.tmp'							# Local temp file name for filtered M3U Playlist
 M3U_BACKUP_FILE='/home/xteve/conf/data/playlist.m3u.bak'                                            		# Local file name of backup file for rollback
 M3U_GROUP_NAMES=( "USA" "UK" "CANADA")										# M3U catagories to add to M3U Playlist
 M3U_MIN_SIZE='600000'												# Set a minimum file size in bytes (triggers auto rollback)
@@ -42,9 +42,15 @@ then
      exit 0
 fi
 
+if [ -f "$M3U_FILE" ]; then
 /bin/cp $M3U_FILE $M3U_BACKUP_FILE
+fi
+if [ -f "$M3U_FILE" ]; then
 rm -f $M3U_FILE
+fi
+if [ -f "$M3U_OUTPUT_FILE" ]; then
 rm -f $M3U_OUTPUT_FILE
+fi
 
 echo ""
 echo "Playlist M3U URL: $M3U_URL"

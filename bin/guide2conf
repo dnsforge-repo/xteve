@@ -2,9 +2,9 @@
 ############################################################################
 # ; Program: guide2conf.pl
 # ; Author : LeeD <hostmaster@dnsforge.com>
-# ; Rev    : v1.0.3
+# ; Rev    : v1.1.1
 # ; Date   : 5/9/2020
-# ; Last Modification: 1/21/2023
+# ; Last Modification: 1/31/2023
 # ;
 # ; Desc   : Perl wrapper for dnsforge/xteve Guide2go & zap2it configuration.
 # ;
@@ -45,8 +45,12 @@ $XTEVE_BRANCH    = $ENV{'XTEVE_BRANCH'};
 $XTEVE_DEBUG     = $ENV{'XTEVE_DEBUG'};
 $XTEVE_API       = $ENV{'XTEVE_API'};
 $XTEVE_VERSION   = $ENV{'XTEVE_VERSION'};
-$GUIDE2GO_HOME   = $ENV{'GUIDE2GO_HOME'};
-$GUIDE2GO_CONF   = $ENV{'GUIDE2GO_CONF'};
+
+$GUIDE2GO_HOME        = $ENV{'GUIDE2GO_HOME'};
+$GUIDE2GO_CONF	      = $ENV{'GUIDE2GO_CONF'};
+$GUIDE2GO_LOG         = $ENV{'GUIDE2GO_LOG'};
+$GUIDE2GO_SERVER_HOST = $ENV{'GUIDE2GO_SERVER_HOST'};
+$GUIDE2GO_SERVER_PORT = $ENV{'GUIDE2GO_SERVER_PORT'};
 
 $PATH            = $ENV{'PATH'};
 $TZ              = $ENV{'TZ'};
@@ -61,6 +65,7 @@ GetOptions(
   'name=s'     => \my $GUIDE2GO_CONFIG_NAME,
   'config=s'   => \my $GUIDE2GO_XMLTV_PATH,
   'max-days=i' => \my $GUIDE2CONF_MAX_DAYS,
+  'server-mode=s' => \my $GUIDE2GO_SERVER_MODE,
   'refresh=i'  => \my $XTEVE_XMLTV_REFRESH,
 ) or &help and exit(1);
 
@@ -105,6 +110,12 @@ if ((!defined $GUIDE2GO_CONFIG_NAME) || ($GUIDE2GO_CONFIG_NAME eq '' || ($GUIDE2
 }
 if ( $GUIDE2CONF_MAX_DAYS !~ /^(1[0-4]|[1-9])$/) {
 	$GUIDE2CONF_MAX_DAYS = 7;
+}
+if ( $GUIDE2GO_SERVER_MODE =~ /cache/ ) {
+        $GUIDE2GO_SERVER_CACHE = 1;
+}
+elsif ( $GUIDE2GO_SERVER_MODE =~ /proxy/ ) {
+	$GUIDE2GO_SERVER_PROXY = 1;
 }
 if ( $GUIDE2CONF_UID !~ /root/ ) {
 	print "Sorry, guide2conf configure mode must run as the root user!!\n";
@@ -217,10 +228,20 @@ my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG ) = @_;
 		print G2GCONF "    Schedule Days: $GUIDE2CONF_MAX_DAYS\n";
 		print G2GCONF "    Subtitle into Description: false\n";
 		print G2GCONF "    Insert credits tag into XML file: true\n";
+		if ( $GUIDE2GO_SERVER_CACHE == 1 ) {
+		print G2GCONF "    Local Images Cache: true\n";
+		}
+		else {
 		print G2GCONF "    Local Images Cache: false\n";
+		}
 		print G2GCONF "    Images Path: $XTEVE_CONF/data/images/\n";
+		if ( $GUIDE2GO_SERVER_PROXY == 1 ) {
+		print G2GCONF "    Proxy Images: true\n";
+		}
+		else {
 		print G2GCONF "    Proxy Images: false\n";
-		print G2GCONF "    Hostname: localhost:8080\n";
+		}
+		print G2GCONF "    Hostname: $GUIDE2GO_SERVER_HOST:$GUIDE2GO_SERVER_PORT\n";
 		print G2GCONF "Rating:\n";
 		print G2GCONF "    Insert rating tag into XML file: true\n";
 		print G2GCONF "    Maximum rating entries. 0 for all entries: 1\n";
@@ -360,11 +381,66 @@ my ( $l_STR_USERNAME,$l_STR_PASSWD,$l_GUIDE2GO_CONFIG,$ZAPMODE,$l_CRON_INT_HOUR,
 sub update_xmltv {
 my ( $l_GUIDE2GO_CONFIG_PATH ) = @_;
 	if ( $GUIDE2CONF_UID =~ /root/ ) {
+		$GUIDE2CONF_PID = $$;
+		$GUIDE2GO_PID = cleanup_pid();
+		$GUIDE2GO_SERVER_MODE = &getServerMode($l_GUIDE2GO_CONFIG_PATH);
+		print "Executing: Info: Server mode: [configure] [$GUIDE2CONF_UID]\n";
+		print "Executing: Info: Image server mode: [$GUIDE2GO_SERVER_MODE]\n" unless $GUIDE2GO_SERVER_MODE eq "";
+
+		if (defined $GUIDE2GO_SERVER_MODE) {
+		print "Executing: Info: Stopping Guide2go Token server running as PID: $GUIDE2GO_PID\n" unless $GUIDE2GO_PID eq "";
+                kill 9, "$GUIDE2GO_PID" unless $GUIDE2GO_PID eq "";
+		print "Executing: Info: Starting Image Token server on [$GUIDE2GO_SERVER_HOST:$GUIDE2GO_SERVER_PORT]...\n";
+                print "Executing: Info: XMLTV file will be built as background task. Please check $GUIDE2GO_LOG for progress...\n";
+		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH > $GUIDE2GO_LOG &");
+		system("/bin/chown $XTEVE_USER:$XTEVE_USER $GUIDE2GO_LOG");
+		}
+		else {
 		system("/sbin/su-exec $XTEVE_USER $XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
+		}
 		system("/bin/chown -R $XTEVE_USER:$XTEVE_USER $l_GUIDE2GO_CONFIG_PATH");
 	} else {
-	system("$XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
+		$GUIDE2CONF_PID = $$;
+                $GUIDE2GO_PID   = cleanup_pid();
+		$GUIDE2GO_SERVER_MODE = &getServerMode($l_GUIDE2GO_CONFIG_PATH);
+		print "Executing: Info: Server mode: [config] [$GUIDE2CONF_UID]\n";
+		print "Executing: Info: Image server mode: [$GUIDE2GO_SERVER_MODE]\n" unless $GUIDE2GO_SERVER_MODE eq "";
+
+		if (defined $GUIDE2GO_SERVER_MODE) {
+		print "Executing: Info: Stopping Guide2go Token server running as PID: $GUIDE2GO_PID\n" unless $GUIDE2GO_PID eq "";
+                kill 9, "$GUIDE2GO_PID" unless $GUIDE2GO_PID eq "";
+		print "Executing: Info: Starting Image Token server on [$GUIDE2GO_SERVER_HOST:$GUIDE2GO_SERVER_PORT]...\n";
+                print "Executing: Info: XMLTV file will be built as background task. Please check $GUIDE2GO_LOG for progress...\n";
+		system("$XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH > $GUIDE2GO_LOG &");
+		system("/bin/chown $XTEVE_USER:$XTEVE_USER $GUIDE2GO_LOG");
+		}
+		else {
+		system("$XTEVE_BIN/guide2go -config $l_GUIDE2GO_CONFIG_PATH");
+		}
 	}
+}
+
+sub cleanup_pid {
+	my $GUIDE2GO_PID = `ps -ef | grep 'guide2go' | grep -v grep | grep -v $GUIDE2CONF_PID | grep -v $GUIDE2GO_LOG | awk '{print \$1}'`;
+	chomp $GUIDE2GO_PID;
+	return $GUIDE2GO_PID;
+}
+
+sub getServerMode {
+	my ( $l_GUIDE2GO_CONFIG_PATH ) = @_;
+	open GUIDE2GO_CONFIG_PATH, "$l_GUIDE2GO_CONFIG_PATH";
+
+        while ($reader = <GUIDE2GO_CONFIG_PATH> ) {
+        chomp $reader;
+
+        if ($reader =~ /Local Images Cache: true/ ) {
+                $GUIDE2GO_SERVER_MODE = "cache";
+                }
+        if ($reader =~ /Proxy Images: true/ ) {
+                $GUIDE2GO_SERVER_MODE = "proxy";
+                }
+        }
+        return $GUIDE2GO_SERVER_MODE;
 }
 
 sub refresh_xmltv {
@@ -388,12 +464,13 @@ sub help() {
 
 	print "\t\t$0 --config\t\t\t[ Update XMLTV file ]\n";
 	print "\t\t$0 --config --refresh=1\t\t[ Refresh xTeVe XMLTV & XEPG ]\n";
+	print "\t\t$0 --server-mode\t\t[ Images Mode: cache | proxy ]\n";
 	print "\n";
 	print "\t\tUsage:\n";
 	print "\t\t$0 --username <username> --password <password> --max-days=7 --name USA-DIRECTV7\n";
 	print "\t\t$0 --username <username\@domain.com> --password <password> --max-days=7 --name USA-ZAP7\n";
 	print "\n";
-	print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml\n";
-	print "\t\t$0 --config $GUIDE2GO_CONF/guide2go.yaml --refresh=1\n";
+	print "\t\t$0 --config $GUIDE2GO_CONF/USA-DIRECTV7.yaml\n";
+	print "\t\t$0 --config $GUIDE2GO_CONF/USA-DIRECTV7.yaml --refresh=1\n";
 	print " -h This help screen\n";
 }
